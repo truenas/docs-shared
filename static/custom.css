@@ -3316,36 +3316,5 @@ th {
 	display: none;
 }
 
-/* Remove Dark Mode colors for compatible browsers */
-@media(prefers-color-scheme: dark){
-	:root{
-		--header-background: rgb(65, 134, 201);
-		--header-font-color: rgb(255, 255, 255);
-		--body-background: white;
-		--body-font-color: rgb(52, 58, 64);
-		--mark-color: rgb(255, 171, 0);
-		--button-background: #498bcb;
-		--button-border-color: rgb(65, 134, 201);
-		--link-color: rgb(10, 83, 154);
-		--link-color-visited: rgb(119, 73, 191);
-		--hint-link-color: rgb(10, 83, 154);
-		--hint-link-color-visited: rgb(119, 73, 191);
-		--accent-color-dark: rgb(206, 212, 218);
-		--accent-color: rgb(233, 236, 239);
-		--accent-color-lite: rgb(248, 249, 250);
-		--control-icons: #b2bac1;
-		--footer-background: rgb(47, 51, 62);
-		--footer-font-color: rgb(255, 255, 255);
-		--footer-link-color: rgb(255, 163, 30);
-		--footer-link-color-visited: rgb(255, 163, 30);
-		--code-background: rgb(248, 249, 250);
-		--code-accent-color: #e6eaed;
-		--code-accent-color-lite: #f2f4f6;
-		--code-font-color: rgb(70, 70, 70);
-		--code-copy-background: rgb(248, 249, 250);
-		--code-copy-font-color: #6b7784;
-		--code-copy-border-color: #adb4bc;
-		--code-copy-success-color: rgb(0, 200, 83)}
-/* End remove Dark Mode colors */
 
 /* End Security Site Additions */
