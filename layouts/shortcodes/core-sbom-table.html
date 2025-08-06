@@ -1,0 +1,55 @@
+<!-- This shortcode builds a Software SBOM list by importing a JSON file and populating the table from specific objects in that file.
+ Shortcode assumed values:
+   - These json objects nested inside the "packages" array are used to populate the securityTable with values:
+     - packages > name
+     - packages > versionInfo
+     - packages > licenseDeclared
+-->
+
+{{ $styles := resources.Get "css/modern-tables.css" | resources.Fingerprint }}
+<style>{{ $styles.Content | safeCSS }}</style>
+
+<div class="table-controls">
+  <select id="fileSelect" onchange="fetchJSONData()">
+    <option value="">Select TrueNAS Version</option>
+    {{ range $file := site.Data.core_sbomfiles }}
+    <option value="{{ $file }}">{{ $file }}</option>
+    {{ end }}
+  </select>
+  <input type="text" id="searchInput" placeholder="Search..." style="display: none;">
+  <button onclick="resetTable()" class="security-button" style="display:none;">Reset</button>
+  <button class="security-button" id="SBOMdownloadButton" onclick="downloadSBOM()">Download SBOM</button>
+</div>
+
+<div class="tablecontainer">
+  <table id="securityTable" class="truetable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Name</th>
+        <th onclick="sortTable(1)">Version</th>
+        <th onclick="sortTable(2)">License</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- Table rows will be dynamically added here -->
+    </tbody>
+  </table>
+</div>
+
+<script src="/js/sbom-tables.js"></script>
+<script>
+  // Initialize the event listener after the DOM is loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add event listener for file select
+    const fileSelect = document.getElementById('fileSelect');
+    if (fileSelect) {
+      fileSelect.addEventListener('change', fetchJSONData);
+    }
+    
+    // Add event listener for search input
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', filterTable);
+    }
+  });
+</script>

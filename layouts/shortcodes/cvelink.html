@@ -1,0 +1,506 @@
+{{ if .IsNamedParams }}
+{{ $styles := resources.Get "css/modern-tables.css" | resources.Fingerprint }}
+<style>{{ $styles.Content | safeCSS }}</style>
+<script>
+    const searchParams = new URLSearchParams(window.location.search);
+    const hasReference = searchParams.has('reference');
+</script>
+
+<div class="search-result-container">
+    <!-- This div will hold the search results or error message -->
+    <div id="search-status" class="search-status"></div>
+    
+    <!-- Loading indicator shown while fetching data -->
+    <div id="loading-indicator" class="loading-indicator">
+        <p>Searching for vulnerability information...</p>
+    </div>
+    
+    <!-- Hidden table, only used for data processing -->
+    <div class="tablecontainer" id="tablecontainer" style="display: none;">
+        <table id="tableHead" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Description</th>
+                    <th>Security Reference</th>
+                    <th>Severity</th>
+                    <th>Security Risk</th>
+                    <th>Impacted Version</th>
+                    <th>Resolved Version</th>
+                    <th>More Info</th>
+                    <th>Additional Info</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+    
+    <!-- Container for advisory details -->
+    <div id="advisory-details" class="advisory-details"></div>
+</div>
+{{ end }}
+
+<script>
+
+let jsonData = [];
+let CVE = "";
+let details_exist = 0;
+let matchCount = 0;
+
+async function draw_page() {
+    // Set up loading state
+    const loadingIndicator = document.getElementById("loading-indicator");
+    const searchStatus = document.getElementById("search-status");
+    
+    if (!hasReference) {
+        // If no reference parameter, show a search form
+        loadingIndicator.style.display = "none";
+        searchStatus.innerHTML = `
+            <div class="search-form">
+                <h2>Security Advisory Search</h2>
+                <p>Enter a CVE or vulnerability reference to find information about TrueNAS security advisories.</p>
+                <form id="vulnerability-search" action="" method="get">
+                    <input type="text" name="reference" placeholder="Enter CVE or reference ID" required>
+                    <button type="submit" class="security-button">Search</button>
+                </form>
+            </div>
+        `;
+        return;
+    }
+    
+    // Extract the reference from URL parameters
+    var parts = searchParams.toString().split('=');
+    CVE = decodeURIComponent(parts[1]);
+    
+    try {
+        // Fetch all data and display results
+        jsonData = await fetchJSONData();
+        
+        // Hide loading indicator
+        loadingIndicator.style.display = "none";
+        
+        // Make sure we have data to search
+        if (!jsonData || !Array.isArray(jsonData) || jsonData.length === 0) {
+            console.error("No data available to search");
+            searchStatus.innerHTML = `
+                <div class="search-error">
+                    <h2>Data Error</h2>
+                    <p>Unable to load security advisory data. Please try again later.</p>
+                    <a href="${window.location.pathname}" class="security-button">New Search</a>
+                </div>
+            `;
+            return;
+        }
+        
+        console.log("Searching for reference:", CVE, "in", jsonData.length, "records");
+        
+        // Find matching vulnerabilities with case-insensitive search
+        const matches = jsonData.filter(item => {
+            if (!item || !item.reference) return false;
+            return item.reference.toLowerCase() === CVE.toLowerCase();
+        });
+        
+        matchCount = matches.length;
+        console.log("Found", matchCount, "matches");
+        
+        if (matchCount > 0) {
+            // Clear previous results
+            const detailsDiv = document.getElementById('advisory-details');
+            if (detailsDiv) {
+                detailsDiv.innerHTML = '';
+                detailsDiv.style.display = 'block';
+            }
+            
+            // Display each match
+            matches.forEach(item => {
+                showDetails(item);
+            });
+            
+            // Display success message
+            searchStatus.innerHTML = `
+                <div class="search-result-header">
+                    <h2>Security Advisory for ${CVE}</h2>
+                    <p>Found ${matchCount} matching ${matchCount === 1 ? 'record' : 'records'} for "${CVE}".</p>
+                    <a href="${window.location.pathname}" class="security-button">New Search</a>
+                </div>
+            `;
+        } else {
+            // Display not found message
+            searchStatus.innerHTML = `
+                <div class="search-not-found">
+                    <h2>No Results Found</h2>
+                    <p>No security advisories found for "${CVE}".</p>
+                    <p>Please check the reference ID and try again, or browse our <a href="/">security advisories</a>.</p>
+                    <a href="${window.location.pathname}" class="security-button">New Search</a>
+                </div>
+            `;
+        }
+    } catch (error) {
+        // Handle errors
+        console.error("Error fetching data:", error);
+        loadingIndicator.style.display = "none";
+        searchStatus.innerHTML = `
+            <div class="search-error">
+                <h2>Error</h2>
+                <p>An error occurred while searching for "${CVE}". Please try again later.</p>
+                <a href="${window.location.pathname}" class="security-button">New Search</a>
+            </div>
+        `;
+    }
+}
+
+async function fetchJSONData() {
+    try {
+        // Fetch CORE and SCALE first - these are required
+        const [response1, response2] = await Promise.all([
+            fetch('/advisories/CORE.json'),
+            fetch('/advisories/SCALE.json')
+        ]);
+        
+        if (!response1.ok || !response2.ok) {
+            throw new Error('Failed to fetch core data');
+        }
+        
+        const [result1, result2] = await Promise.all([
+            response1.json(),
+            response2.json()
+        ]);
+        
+        let combinedResults = [...result1, ...result2];
+        
+        // Try to fetch Solutions, but don't fail if it doesn't exist
+        try {
+            const response3 = await fetch('/advisories/Solutions.json');
+            if (response3.ok) {
+                const result3 = await response3.json();
+                combinedResults = [...combinedResults, ...result3];
+                console.log("Successfully loaded Solutions.json data");
+            } else {
+                console.log("Solutions.json returned status:", response3.status);
+            }
+        } catch (e) {
+            console.log("Solutions.json not available, continuing with CORE and SCALE data");
+        }
+        
+        console.log("Combined results:", combinedResults.length, "items");
+        return combinedResults;
+    } catch (error) {
+        console.error("Error fetching advisory data:", error);
+        throw error;
+    }
+}
+
+
+function showDetails(item) {
+  console.log("Showing details for item:", item);
+  
+  // Guard against undefined or null items
+  if (!item) {
+    console.error("showDetails called with null or undefined item");
+    return;
+  }
+  
+  const detailsDiv = document.getElementById('advisory-details');
+  if (!detailsDiv) {
+    console.error("Could not find advisory-details element");
+    return;
+  }
+  
+  // Make sure the details div is visible
+  detailsDiv.style.display = 'block';
+  
+  // Create a new advisory card for this item
+  const advisoryCard = document.createElement('div');
+  advisoryCard.classList.add('advisory-card');
+  
+  // If this is a product-specific variant, add product information to the header
+  const productInfo = item.productVersionImpacted ? 
+    `<span class="product-badge">${item.productVersionImpacted}</span>` : '';
+  
+  // Create the card header - ensure reference exists
+  const cardHeader = document.createElement('div');
+  cardHeader.classList.add('card-header');
+  cardHeader.innerHTML = `
+    <h3>${item.reference || 'Unknown Reference'} ${productInfo}</h3>
+  `;
+  advisoryCard.appendChild(cardHeader);
+  
+  // Create two-column layout
+  const columnsDiv = document.createElement('div');
+  columnsDiv.classList.add('advisory-columns');
+  
+  const leftColumn = document.createElement('div');
+  leftColumn.classList.add('advisory-column');
+  
+  const rightColumn = document.createElement('div');
+  rightColumn.classList.add('advisory-column');
+  
+  // Add section headers
+  const vulnerabilityHeader = document.createElement('h4');
+  vulnerabilityHeader.textContent = 'Vulnerability Details';
+  leftColumn.appendChild(vulnerabilityHeader);
+  
+  const responseHeader = document.createElement('h4');
+  responseHeader.textContent = 'TrueNAS Response';
+  rightColumn.appendChild(responseHeader);
+  
+  // Define the properties to display in each column
+  const properties = [
+    { label: 'Reference URL', key: 'moreinfo', column: 'left' },
+    { label: 'Component', key: 'component', column: 'left' },
+    { label: 'Base Severity (NIST)', key: 'severity', column: 'left' },
+    { label: 'Description', key: 'description', column: 'left' },
+    { label: 'Product Version', key: 'productVersionImpacted', column: 'right' },
+    { label: 'TrueNAS Risk Rating', key: 'truenasSecurityRisk', column: 'right' },
+    { label: 'Additional Details', key: 'ixAdditionalInfo', column: 'right' },
+    { label: 'Fixed in Version', key: 'productVersionResolvedIn', column: 'right' },
+    { label: 'Ticket', key: 'ixbug', column: 'right' }
+  ];
+  
+  // Create property rows
+  properties.forEach(prop => {
+    // Skip empty properties but include zeros
+    if (item[prop.key] === undefined || item[prop.key] === null || item[prop.key] === '') return;
+    
+    const propertyRow = document.createElement('div');
+    propertyRow.classList.add('property-row');
+    
+    const label = document.createElement('div');
+    label.classList.add('property-label');
+    label.textContent = prop.label + ':';
+    
+    const value = document.createElement('div');
+    value.classList.add('property-value');
+    
+    // Handle special properties
+    if (prop.key === 'moreinfo' && item[prop.key]) {
+      try {
+        const link = document.createElement('a');
+        link.href = item[prop.key];
+        link.target = '_blank';
+        link.textContent = item[prop.key];
+        value.appendChild(link);
+      } catch (error) {
+        console.error("Error creating link for moreinfo:", error);
+        value.textContent = item[prop.key] || 'N/A';
+      }
+    } else if (prop.key === 'ixbug' && item[prop.key] && item[prop.key] !== 'None') {
+      try {
+        const link = document.createElement('a');
+        link.href = 'https://ixsystems.atlassian.net/browse/' + item[prop.key];
+        link.target = '_blank';
+        link.textContent = item[prop.key];
+        value.appendChild(link);
+      } catch (error) {
+        console.error("Error creating link for ixbug:", error);
+        value.textContent = item[prop.key] || 'N/A';
+      }
+    } else if (prop.key === 'truenasSecurityRisk') {
+      value.textContent = item[prop.key] || 'N/A';
+      
+      // Add color coding based on risk level
+      const riskLevel = item[prop.key];
+      if (riskLevel === 'Critical' || riskLevel === 'High') {
+        value.classList.add('risk-high');
+      } else if (riskLevel === 'Medium') {
+        value.classList.add('risk-medium');
+      } else if (riskLevel === 'Low') {
+        value.classList.add('risk-low');
+      } else if (riskLevel === 'False Positive') {
+        value.classList.add('risk-none');
+      }
+    } else {
+      // Ensure we have a string representation for any value
+      value.textContent = item[prop.key] !== undefined ? String(item[prop.key]) : 'N/A';
+    }
+    
+    propertyRow.appendChild(label);
+    propertyRow.appendChild(value);
+    
+    // Add to appropriate column
+    if (prop.column === 'left') {
+      leftColumn.appendChild(propertyRow);
+    } else {
+      rightColumn.appendChild(propertyRow);
+    }
+  });
+  
+  // Assemble the columns
+  columnsDiv.appendChild(leftColumn);
+  columnsDiv.appendChild(rightColumn);
+  advisoryCard.appendChild(columnsDiv);
+  
+  // Add the card to the details container
+  detailsDiv.appendChild(advisoryCard);
+  
+  // Add a divider if this isn't the last item
+  if (matchCount > 1) {
+    const divider = document.createElement('hr');
+    detailsDiv.appendChild(divider);
+  }
+}
+
+// Add CSS for the new search results UI
+document.addEventListener('DOMContentLoaded', function() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .search-result-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .search-status {
+      margin-bottom: 30px;
+    }
+    
+    .loading-indicator {
+      text-align: center;
+      padding: 40px;
+      font-style: italic;
+    }
+    
+    .search-form {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .search-form h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+    
+    .search-form input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    .search-form button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+    }
+    
+    .search-result-header {
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .search-not-found, .search-error {
+      text-align: center;
+      padding: 40px;
+      background: #f8f8f8;
+      border-radius: 8px;
+      margin: 30px 0;
+    }
+    
+    .advisory-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+    
+    .card-header {
+      background: #f0f0f0;
+      padding: 15px 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .card-header h3 {
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .product-badge {
+      font-size: 14px;
+      background: #0056b3;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-left: 10px;
+    }
+    
+    .advisory-columns {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+    }
+    
+    .advisory-column {
+      flex: 1;
+      min-width: 300px;
+      padding: 0 15px;
+    }
+    
+    .advisory-column h4 {
+      margin-top: 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .property-row {
+      margin-bottom: 15px;
+    }
+    
+    .property-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .property-value {
+      line-height: 1.5;
+    }
+    
+    .risk-high {
+      color: #d32f2f;
+      font-weight: bold;
+    }
+    
+    .risk-medium {
+      color: #f57c00;
+      font-weight: bold;
+    }
+    
+    .risk-low {
+      color: #388e3c;
+      font-weight: bold;
+    }
+    
+    .risk-none {
+      color: #757575;
+      font-style: italic;
+    }
+    
+    @media (max-width: 768px) {
+      .advisory-columns {
+        flex-direction: column;
+      }
+      
+      .advisory-column {
+        width: 100%;
+        padding: 0;
+      }
+      
+      .advisory-column + .advisory-column {
+        margin-top: 30px;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+});
+
+draw_page();
+</script>
