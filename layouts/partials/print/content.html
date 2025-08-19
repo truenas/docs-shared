@@ -8,7 +8,7 @@
     {{ $break := cond .DoPageBreak "page-break-before: always" "" }}
 	<h1>{{ .Page.Title }}</h1>
     <head>
-    	<link rel="stylesheet" type="text/css" href="https://www.truenas.com/docs/custom.css">
+    	<link rel="stylesheet" type="text/css" href="{{ "custom.css" | relURL }}">
     </head>
 	{{ .Page.Content }}
 </div>

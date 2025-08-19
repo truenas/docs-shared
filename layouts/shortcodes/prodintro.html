@@ -23,20 +23,20 @@ Parameters:
   <tr>
     <td colspan="2" class="prodbanner">
       <a href="{{ .Get "bannerlink" }}">
-        <img src="/images/Hardware/{{ .Get "banner" }}" aria-label="{{ .Get "bannerhover" }}">
+        <img src="{{ printf "/images/Hardware/%s" (.Get "banner") | relURL }}" aria-label="{{ .Get "bannerhover" }}">
       </a>
     </td>
   </tr>
   <tr>
     <td style="width:50%;">
       <div class="prodintronote">
-        <div class="prodnoteicon"><img class="prodicons" src="/images/Hardware/Icons/{{ .Get "icon1" }}"></div>
+        <div class="prodnoteicon"><img class="prodicons" src="{{ printf "/images/Hardware/Icons/%s" (.Get "icon1") | relURL }}"></div>
         <div class="prodnotetext"><b>{{ .Get "cell1title" }}</b><br>{{ .Get "cell1text" }}</div>
       </div>
     </td>
     <td style="width:50%;">
       <div class="prodintronote">
-        <div class="prodnoteicon"><img class="prodicons" src="/images/Hardware/Icons/{{ .Get "icon2" }}"></div>
+        <div class="prodnoteicon"><img class="prodicons" src="{{ printf "/images/Hardware/Icons/%s" (.Get "icon2") | relURL }}"></div>
         <div class="prodnotetext"><b>{{ .Get "cell2title" }}</b><br>{{ .Get "cell2text" }}</div>
       </div>
     </td>
@@ -44,13 +44,13 @@ Parameters:
   <tr>
     <td style="width:50%;">
       <div class="prodintronote">
-        <div class="prodnoteicon"><img class="prodicons" src="/images/Hardware/Icons/{{ .Get "icon3" }}"></div>
+        <div class="prodnoteicon"><img class="prodicons" src="{{ printf "/images/Hardware/Icons/%s" (.Get "icon3") | relURL }}"></div>
         <div class="prodnotetext"><b>{{ .Get "cell3title" }}</b><br>{{ .Get "cell3text" }}</div>
       </div>
     </td>
     <td style="width:50%;">
       <div class="prodintronote">
-        <div class="prodnoteicon"><img class="prodicons" src="/images/Hardware/Icons/{{ .Get "icon4" }}"></div>
+        <div class="prodnoteicon"><img class="prodicons" src="{{ printf "/images/Hardware/Icons/%s" (.Get "icon4") | relURL }}"></div>
         <div class="prodnotetext"><b>{{ .Get "cell4title" }}</b><br>{{ .Get "cell4text" }}</div>
       </div>
     </td>
