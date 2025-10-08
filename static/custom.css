@@ -3447,5 +3447,56 @@ th {
 	display: none;
 }
 
+/* advisory-details styling */
+#advisory-details {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+/* Two-column layout */
+.details-columns {
+    display: flex;
+    gap: 2rem; /* Space between the columns */
+}
+
+/* Individual columns */
+.details-column {
+    flex: 1; /* Equal width for both columns */
+}
+
+/* Left column */
+.details-left {
+    margin-right: 1rem;
+}
+
+/* Right column */
+.details-right {
+    margin-left: 1rem;
+}
+
+/* Styling for individual detail items */
+.detail-item {
+    margin-bottom: 10px;
+}
+
+/* Styling for labels */
+.detail-item span:first-child {
+    display: inline-block;
+    width: 150px;
+    font-weight: bold;
+}
+
+/* Styling for links */
+.detail-item a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.detail-item a:hover {
+    text-decoration: underline;
+}
 
 /* End Security Site Additions */
