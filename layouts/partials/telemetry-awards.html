@@ -1,18 +1,31 @@
-{{ $timestamp := now.Unix | div 3600 }}
-{{ $telemetryURL := printf "https://telemetry.sys.truenas.net/apps/truenas-apps-stats.json?t=%d" $timestamp }}
-{{ $telemetryData := resources.GetRemote $telemetryURL | transform.Unmarshal | default dict }}
+{{/* Accept telemetryData from parent shortcode to avoid redundant fetches */}}
+{{ $telemetryData := .telemetryData | default dict }}
+
+{{/* If no data was passed, fetch it (fallback for backwards compatibility) */}}
+{{ if not $telemetryData }}
+  {{ $timestamp := now.Unix }}
+  {{ $telemetryURL := printf "https://telemetry.sys.truenas.net/apps/truenas-apps-stats.json?t=%d" $timestamp }}
+  {{ $rawData := resources.GetRemote $telemetryURL }}
+  {{ $telemetryData = $rawData | transform.Unmarshal | default dict }}
+{{ end }}
+
 {{ $appName := .appName | lower }}
 {{ $appTrain := .appTrain | lower }}
 {{ $telemetryTrain := cond (eq $appTrain "enterprise") "Enterprise" (cond (eq $appTrain "stable") "Stable" "Community") }}
-{{ $deploymentCount := 0 }}
 
-{{ with index $telemetryData $telemetryTrain }}
-  {{ range $k, $v := . }}
-    {{ if eq (lower $k) $appName }}
-      {{ $deploymentCount = $v }}
-    {{ end }}
+{{/* Get the train data */}}
+{{ $trainData := index $telemetryData $telemetryTrain | default dict }}
+
+{{/* Look up the deployment count directly */}}
+{{ $deploymentCount := 0 }}
+{{ range $k, $v := $trainData }}
+  {{ if eq (lower $k) $appName }}
+    {{ $deploymentCount = $v }}
   {{ end }}
 {{ end }}
+
+{{/* Convert to int to ensure proper comparison */}}
+{{ $deploymentCount = int $deploymentCount }}
 
 {{ if gt $deploymentCount 0 }}
   <div class="popular-app">

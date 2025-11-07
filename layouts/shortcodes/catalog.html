@@ -28,7 +28,7 @@
 
 <!-- Catalog Cards -->
 <div class="docs-sections" id="catalog-cards">
-  {{- $timestamp := now.Unix | div 3600 -}}
+  {{- $timestamp := now.Unix -}} <!-- Use full Unix timestamp to prevent stale caching -->
   {{- $telemetryURL := printf "https://telemetry.sys.truenas.net/apps/truenas-apps-stats.json?t=%d" $timestamp -}} <!-- Telemetry data URL -->
   {{- $rawData := resources.GetRemote $telemetryURL -}} <!-- Fetch telemetry data -->
   {{- $telemetryData := $rawData | transform.Unmarshal | default dict -}} <!-- Parse telemetry data -->
@@ -98,7 +98,7 @@
          data-train="{{ $mdTrain }}" 
          {{- if gt (len $keywords) 0 }} data-keywords="{{ delimit $keywords "," }}"{{- end }}>
         <!-- Include telemetry and awards -->
-        {{ partial "telemetry-awards.html" (dict "appName" $baseAppName "appTrain" $mdTrain) }}
+        {{ partial "telemetry-awards.html" (dict "appName" $baseAppName "appTrain" $mdTrain "telemetryData" $telemetryData) }}
         <div class="box-image">
           <img class="app-card-img" src="{{ $appIcon }}" aria-label="{{ $appTitle }} Logo">
         </div>
