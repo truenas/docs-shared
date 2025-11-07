@@ -1,5 +1,5 @@
 {{/* Define constants and variables */}}
-{{ $timestamp := now.Unix | div 3600 }}
+{{ $timestamp := now.Unix }} <!-- Use full Unix timestamp to prevent stale caching -->
 {{ $telemetryURL := printf "https://telemetry.sys.truenas.net/apps/truenas-apps-stats.json?t=%d" $timestamp }}
 {{ $rawData := resources.GetRemote $telemetryURL }}
 {{ $telemetryData := $rawData | transform.Unmarshal | default dict }}
@@ -141,7 +141,7 @@
         <p class="app-description">{{ $app.description }}</p>
       </div>
       <!-- Include telemetry and awards -->
-      {{ partial "telemetry-awards.html" (dict "appName" $app.name "appTrain" $app.train) }}
+      {{ partial "telemetry-awards.html" (dict "appName" $app.name "appTrain" $app.train "telemetryData" $telemetryData) }}
     </a>
   {{ end }}
 
