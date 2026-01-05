@@ -362,7 +362,6 @@ mark {
 }
 .truenas-menudropdown a:hover {color: #0095D5;}
 .truenas-menuitem:hover .truenas-menudropdown {display: block;}
-.truenas-menuitem:hover .truenas-menubutton {background-color: #000000;color:#0095D5;}
 .truenas-menuitem:hover .truenasdownload-menudropdown {display: block;}
 .truenasdownload-menudropdown a:hover {color: #0095D5;}
 .truenas-menuitem:hover .truenas-downloadbutton {
