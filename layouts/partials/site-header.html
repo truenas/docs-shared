@@ -1,348 +1,365 @@
 <header class="gdoc-header" id="TrueNASHeader">
-  <div class="container linksrow" style="padding-top:.5rem">
-		<div class="truenas-mediamenu">
-            <button class="truenas-menubutton"><i class="fa fa-bars"></i></button>&emsp;<img src="{{ (default "brand.svg" .Root.Site.Params.GeekdocLogo) | relURL }}" alt="TrueNAS Open Storage Logo" style="max-width: 50%;">
-            <div class="truenas-menudropdown">
-                <a href="https://www.truenas.com">TrueNAS.com</a>
-                <a href="https://www.truenas.com/truenas-enterprise/#Systems">Products</a>
-                <a href="https://www.ixsystems.com/support/">Enterprise Support</a>
-                <a href="https://forums.truenas.com/">Community Support</a>
-                <a href="https://security.truenas.com">Truenas Security</a>
-                <a href="https://www.truenas.com/truenas-enterprise/">Get TrueNAS Enterprise</a>
-                <a href="https://www.truenas.com/truenas-community-edition/">Download TrueNAS Community Edition</a>
-                <a href="https://www.ixsystems.com/about-us/">About TrueNAS</a>
-                <a href="https://www.ixsystems.com/careers/">Careers</a>
-            </div>
-        </div>
-	    <div class="container truerow">
-			<a class="gdoc-brand gdoc-header__link" href="https://www.truenas.com">
-				<span class="flex align-center">
-				<img class="gdoc-brand__img" style="display:flex;float:left" src="{{ (default "brand.svg" .Root.Site.Params.GeekdocLogo) | relURL }}" alt="TrueNAS Open Storage Logo"/>
-				</span>
-			</a>
-			<div class="truenas-menubar" style="display:flex;float:right">
-                <div class="truenas-menuitem">
-                    <button class="truenas-menubutton">Products <i class="fa fa-angle-down"></i></button>
-                    <div class="truenas-menudropdown">
-                        <div class="truenas-menuitem-columns">
-                            <!-- Left Column -->
-                            <div class="truenas-menuitem-column">
-                                <a href="https://www.truenas.com/f-series/" class="truenas-menuitem-link">
-                                    <img src="{{ "/favicon/f-series.png" | relURL }}" alt="F-Series">
-                                    <div class="truenas-menuitem-text">
-                                        <b>F-Series</b>
-                                        <p>All-Flash NVMe Performance.</p>
-                                    </div>
-                                </a>
-                                <a href="https://www.truenas.com/h-series/" class="truenas-menuitem-link">
-                                    <img src="{{ "/favicon/h-series.png" | relURL }}" alt="H-Series">
-                                    <div class="truenas-menuitem-text">
-                                        <b>H-Series</b>
-                                        <p>Big business performance. Entry level pricing.</p>
-                                    </div>
-                                </a>
-                                <a href="https://www.truenas.com/truenas-mini/" class="truenas-menuitem-link">
-                                    <img src="{{ "/favicon/minis.png" | relURL }}" alt="Mini Series">
-                                    <div class="truenas-menuitem-text">
-                                        <b>Mini Series</b>
-                                        <p>Home Labs, Small Office & SMB Applications.</p>
-                                    </div>
-                                </a>
-                            </div>
-                            <!-- Right Column -->
-                            <div class="truenas-menuitem-column">
-                                <a href="https://www.truenas.com/m-series/" class="truenas-menuitem-link">
-                                    <img src="{{ "/favicon/m-series.png" | relURL }}" alt="M-Series">
-                                    <div class="truenas-menuitem-text">
-                                        <b>M-Series</b>
-                                        <p>All-Flash or Hybrid Enterprise Performance.</p>
-                                    </div>
-                                </a>
-                                <a href="https://www.truenas.com/r-series/" class="truenas-menuitem-link">
-                                    <img src="{{ "/favicon/rseries.png" | relURL }}" alt="R-Series">
-                                    <div class="truenas-menuitem-text">
-                                        <b>R-Series</b>
-                                        <p>Single Controller Storage Appliances.</p>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- Horizontal Rule -->
-                        <hr class="truenas-menudropdown-hr">
-                        <!-- Additional Items Below Horizontal Rule -->
-                        <div class="truenas-menuitem-columns">
-                            <div class="truenas-menuitem-column">
-                                <a href="https://www.truenas.com/truenas-enterprise/" class="truenas-menuitem-link">
-                                    <img src="{{ "/images/full-rgb.png" | relURL }}" alt="TrueNAS Enterprise Icon">
-                                    <div class="truenas-menuitem-text">
-                                        <b>TrueNAS Enterprise</b>
-                                        <p>Mission Critical Storage. 24×7 Enterprise Support.</p>
-                                    </div>
-                                </a>        
-                            </div>
-                            <div class="truenas-menuitem-column">
-                                <a href="https://www.truenas.com/truecommand/" class="truenas-menuitem-link">
-                                    <img src="{{ "/favicon/tc-full.png" | relURL }}" alt="TrueCommand Icon">
-                                    <div class="truenas-menuitem-text">
-                                        <b>TrueCommand</b>
-                                        <p>Manage Your TrueNAS Fleet All From One Place.</p>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="truenas-menuitem">
-                    <button class="truenas-menubutton">Solutions <i class="fa fa-angle-down"></i></button>
-                    <div class="truenas-menudropdown">
-                        <div class="truenas-menuitem-columns">
-                            <!-- Left Column -->
-                            <div class="truenas-menuitem-column">
-                                <h3 class="truenas-column-header">Use Cases</h3>
-                                <hr class="truenas-menudropdown-hr">
-                                <div class="truenas-sub-columns">
-                                    <div class="truenas-sub-column">
-                                        <a href="https://www.truenas.com/analytics/">Analytics</a>
-                                        <a href="https://www.truenas.com/backup/">Backup & Archival</a>
-                                        <a href="https://www.truenas.com/cloud/">Cloud</a>
-                                        <a href="https://www.truenas.com/data-mobility/">Data Mobility</a>
-                                        <a href="https://www.truenas.com/file-sharing/">File Sharing</a>
-                                    </div>
-                                    <div class="truenas-sub-column">
-                                        <a href="https://www.truenas.com/ix-storj/">iX-Storj</a>
-                                        <a href="https://www.truenas.com/media-creation/">Media & Entertainment</a>
-                                        <a href="https://www.truenas.com/video-surveillance/">Surveillance</a>
-                                        <a href="https://www.truenas.com/veeam/">Veeam Backup</a>
-                                        <a href="https://www.truenas.com/virtualization/">Virtualization</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Right Column -->
-                            <div class="truenas-menuitem-column">
-                                <h3 class="truenas-column-header">Industry</h3>
-                                <hr class="truenas-menudropdown-hr">
-                                <div class="truenas-sub-columns">
-                                    <div class="truenas-sub-column">
-                                        <a href="https://www.truenas.com/audio/">Audio</a>
-                                        <a href="https://www.truenas.com/broadcasting/">Broadcasting</a>
-                                        <a href="https://www.truenas.com/gaming/">Gaming</a>
-                                        <a href="https://www.truenas.com/healthcare/">Healthcare</a>
-                                        <a href="https://www.truenas.com/manufacturing/">Manufacturing</a>
-                                        <a href="https://www.truenas.com/media-creation/">Media & Entertainment</a>
-                                    </div>
-                                    <div class="truenas-sub-column">
-                                        <a href="https://www.truenas.com/automotive/">Automotive</a>
-                                        <a href="https://www.truenas.com/education/">Education</a>
-                                        <a href="https://www.truenas.com/government/">Government</a>
-                                        <a href="https://www.truenas.com/managed-service-provider/">MSP</a>
-                                        <a href="https://www.truenas.com/ai/">Research & AI</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="truenas-menuitem">
-                    <button class="truenas-menubutton">Support & Resources <i class="fa fa-angle-down"></i></button>
-                    <div class="truenas-menudropdown">
-                        <div class="truenas-menuitem-columns">
-                            <!-- Left Column -->
-                            <div class="truenas-menuitem-column">
-                                <h3 class="truenas-column-header">Support</h3>
-                                <hr class="truenas-menudropdown-hr">
-                                <a href="https://www.ixsystems.com/support/" class="truenas-menuitem-link">
-                                    <div class="truenas-menuitem-text">
-                                        <b>Enterprise Support</b>
-                                        <p>For customers with active support contracts.</p>
-                                    </div>
-                                </a>
-                                <a href="https://forums.truenas.com/" class="truenas-menuitem-link">
-                                    <div class="truenas-menuitem-text">
-                                        <b>Community Support</b>
-                                        <p>For peer-to-peer, open-source support.</p>
-                                    </div>
-                                </a>
-                            </div>
-                            <!-- Right Column -->
-                            <div class="truenas-menuitem-column">
-                                <h3 class="truenas-column-header">Resources</h3>
-                                <hr class="truenas-menudropdown-hr">
-                                <div class="truenas-sub-columns">
-                                    <div class="truenas-sub-column">
-                                        <a href="https://www.truenas.com/case-studies/">Case Studies</a>
-                                        <a href="https://www.truenas.com/docs/">Documentation</a>
-										<a href="https://api.truenas.com">TrueNAS API</a>
-                                        <a href="https://apps.truenas.com/">Apps Market</a>
-                                        <a href="https://security.truenas.com">TrueNAS Security</a>
-                                        <a href="https://www.truenas.com/faq/">FAQ</a>
-                                        <a href="https://www.truenas.com/zfs/">ZFS Overview</a>            
-                                    </div>
-                                    <div class="truenas-sub-column">
-                                        <a href="https://www.truenas.com/blog/">TrueNAS Blog</a>
-                                        <a href="https://www.truenas.com/solution-guides/">Solution Guides</a>
-                                        <a href="https://www.truenas.com/datasheets/">Datasheets</a>
-                                        <a href="https://www.truenas.com/software-status/">Software Status</a>
-                                        <a href="https://www.truenas.com/videos/">Videos</a>
-                                        <a href="https://portal.ixsystems.com/portal/signin/">TrueCommand Cloud</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="truenas-menuitem">
-                    <button class="truenas-menubutton">Community <i class="fa fa-angle-down"></i></button>
-                    <div class="truenas-menudropdown">
-                        <a href="https://www.truenas.com/truenas-community-edition/">TrueNAS Community Edition</a>
-                        <a href="https://forums.truenas.com/">Community Forum</a>
-						<a href="https://discord.com/invite/Q3St5fPETd">Discord</a>
-						<a href="https://www.github.com/truenas">TrueNAS GitHub</a>
-                        <a href="https://www.truenasmerch.com">TrueNAS Merch Store</a>
-                    </div>
-                </div>               
-                <div class="truenas-menuitem">
-                    <button class="truenas-menubutton">Company <i class="fa fa-angle-down"></i></button>
-                    <div class="truenas-menudropdown">
-                        <a href="https://www.ixsystems.com/about-us/">About TrueNAS</a>
-						<a href="https://www.ixsystems.com/awards/">Awards</a>
-						<a href="https://www.truenas.com/careers/">Careers</a>
-						<a href="https://www.truenas.com/contact-us/">Contact Us</a>
-						<a href="https://www.truenas.com/clients/">Our Clients</a>
-						<a href="https://www.truenas.com/reviews/">Reviews</a>
-                    </div>
-                </div>
-                <div class="truenas-menuitem">
-                    <button class="truenas-downloadbutton">Get TrueNAS <i class="fa fa-angle-down"></i></button>
-		            <div class="truenasdownload-menudropdown">
-                        <a href="https://www.truenas.com/get-quote/" class="truenas-menuitem-link">
-                            <img src="{{ "/images/chat.svg" | relURL }}" alt="Contact Icon">
-                            <div class="truenas-menuitem-text">
-                                <b>Contact an Enterprise Specialist</b>
-                                <p>Speak with an enterprise storage specialist to find the right solutions for your business needs.</p>
-                            </div>
-                        </a>
-                        <a href="https://www.truenas.com/truenas-enterprise/" class="truenas-menuitem-link">
-                            <img src="{{ "/images/full-rgb.png" | relURL }}" alt="TrueNAS Enterprise Icon">
-                            <div class="truenas-menuitem-text">
-                                <b>TrueNAS Enterprise</b>
-                                <p>Enterprise-grade storage appliances designed for business and mission-critical environments.</p>
-                            </div>
-                        </a>
-                        <a href="https://www.truenas.com/truenas-community-edition/" class="truenas-menuitem-link">
-                            <img src="{{ "/images/Truenas_icon.png" | relURL }}" alt="TrueNAS Community Edition Icon">
-                            <div class="truenas-menuitem-text">
-                                <b>Download TrueNAS Community Edition</b>
-                                <p>Test Drive TrueNAS in Your Environment.</p>
-                            </div>
-                        </a>
-                    </div>
-                </div>    
-                <div class="truenas-menuitem">
-                    <a href="https://www.ixsystems.com/support">
-                        <button class="truenas-supportbutton"> <i class="fa fa-headphones" aria-hidden="true"></i>&emsp;Enterprise Support  </button>
-                    </a>
-                </div>
-			</div>
-		</div>
-</header>
+    <div class="container linksrow">
+          <div class="container truerow">
+              <a class="gdoc-brand gdoc-header__link" href="https://www.truenas.com">
+                  <span class="flex align-center">
+                  <img class="gdoc-brand__img" style="display:flex;float:left" src="/images/TN_Open_Enterprise_Storage_Blue_Version-1.png" alt="TrueNAS"/>
+                  <!--<span class="gdoc-brand__title">{{ .Site.Title }}</span>-->
+                  </span>
+              </a>
+              <div class="truenas-menubar" style="display:flex;float:right">
+                  <!-- Mobile hamburger menu -->
+                  <div class="truenas-hamburger-menu">
+                      <button class="truenas-hamburger-button">
+                          <span class="hamburger-bar"></span>
+                          <span class="hamburger-bar"></span>
+                          <span class="hamburger-bar"></span>
+                      </button>
+                      <div class="truenas-mobile-dropdown">
+                          <div class="mobile-menu-columns">
+                              <!-- Left Column -->
+                              <div class="mobile-menu-column">
+                                  <div class="mobile-menu-section" data-menu="products">
+                                      <span class="mobile-menu-title">Products <i class="fa fa-angle-down"></i></span>
+                                  </div>
+                                  <div class="mobile-menu-section" data-menu="support">
+                                      <span class="mobile-menu-title">Support & Resources <i class="fa fa-angle-down"></i></span>
+                                  </div>
+                              </div>
+                              <!-- Right Column -->
+                              <div class="mobile-menu-column">
+                                  <div class="mobile-menu-section" data-menu="solutions">
+                                      <span class="mobile-menu-title">Solutions <i class="fa fa-angle-down"></i></span>
+                                  </div>
+                                  <div class="mobile-menu-section" data-menu="company">
+                                      <span class="mobile-menu-title">Company <i class="fa fa-angle-down"></i></span>
+                                  </div>
+                              </div>
+                          </div>
+                          <button class="mobile-menu-close">Close</button>
+                      </div>
+                  </div>
+                  <div class="truenas-menu-buttons-group">
+                  <div class="truenas-menuitem" id="desktop-products">
+                      <button class="truenas-menubutton">Products <i class="fa fa-angle-down"></i></button>
+                      <div class="truenas-menudropdown">
+                          <div class="truenas-menuitem-columns">
+                              <!-- Left Column -->
+                              <div class="truenas-menuitem-column">
+                                  <a href="https://www.truenas.com/f-series/" class="truenas-menuitem-link">
+                                      <img src="/favicon/f-series.png" alt="F-Series">
+                                      <div class="truenas-menuitem-text">
+                                          <b>F-Series</b>
+                                          <p>High Performance NVME</p>
+                                      </div>
+                                  </a>
+                                  <a href="https://www.truenas.com/h-series/" class="truenas-menuitem-link">
+                                      <img src="/favicon/h-series.png" alt="H-Series">
+                                      <div class="truenas-menuitem-text">
+                                          <b>H-Series</b>
+                                          <p>Versatility and Power Efficiency</p>
+                                      </div>
+                                  </a>
+                                  <a href="https://www.truenas.com/truenas-mini/" class="truenas-menuitem-link">
+                                      <img src="/favicon/minis.png" alt="Mini Series">
+                                      <div class="truenas-menuitem-text">
+                                          <b>Mini Series</b>
+                                          <p>Edge and Branch Office</p>
+                                      </div>
+                                  </a>
+                              </div>
+                              <!-- Right Column -->
+                              <div class="truenas-menuitem-column">
+                                  <a href="https://www.truenas.com/m-series/" class="truenas-menuitem-link">
+                                      <img src="/favicon/m-series.png" alt="M-Series">
+                                      <div class="truenas-menuitem-text">
+                                          <b>M-Series</b>
+                                          <p>High Capacity All-Flash or Hybrid</p>
+                                      </div>
+                                  </a>
+                                  <a href="https://www.truenas.com/r-series/" class="truenas-menuitem-link">
+                                      <img src="/favicon/rseries.png" alt="R-Series">
+                                      <div class="truenas-menuitem-text">
+                                          <b>R-Series</b>
+                                          <p>Single Controller Appliances</p>
+                                      </div>
+                                  </a>
+                              </div>
+                          </div>
+                          <!-- Horizontal Rule -->
+                          <hr class="truenas-menudropdown-hr">
+                          <!-- Additional Items Below Horizontal Rule -->
+                          <div class="truenas-edition-buttons">
+                              <a href="https://www.truenas.com/truenas-enterprise/" class="truenas-edition-button">
+                                  <img src="/images/truenas-enterprise-logo-white.svg" width="100px" alt="TrueNAS Enterprise">
+                                  <div class="edition-text">
+                                      <div class="edition-title">TrueNAS Enterprise</div>
+                                      <div class="edition-description">Mission Critical Storage. 24×7 Enterprise Support</div>
+                                  </div>
+                              </a>
+                              <a href="https://www.truenas.com/truenas-community-edition/" class="truenas-edition-button">
+                                  <img src="/images/truenas-community-edition-logo-white.png" width="100px" alt="TrueNAS Community Edition">
+                                  <div class="edition-text">
+                                      <div class="edition-title">TrueNAS Community Edition</div>
+                                      <div class="edition-description">Test Drive TrueNAS in Your Environment</div>
+                                  </div>
+                              </a>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="truenas-menuitem" id="desktop-solutions">
+                      <button class="truenas-menubutton">Solutions <i class="fa fa-angle-down"></i></button>
+                      <div class="truenas-menudropdown">
+                          <div class="truenas-menuitem-columns">
+                              <!-- Left Column -->
+                              <div class="truenas-menuitem-column">
+                                  <h3 class="truenas-column-header">Industry</h3>
+                                  <hr class="truenas-menudropdown-hr">
+                                  <a href="https://www.truenas.com/audio/">Audio</a>
+                                  <a href="https://www.truenas.com/automotive/">Automotive</a>
+                                  <a href="https://www.truenas.com/broadcasting/">Broadcasting</a>
+                                  <a href="https://www.truenas.com/education/">Education</a>
+                                  <a href="https://www.truenas.com/us-public-sector/">US Public Sector</a>
+                                  <a href="https://www.truenas.com/gaming/">Gaming</a>
+                                  <a href="https://www.truenas.com/healthcare/">Healthcare</a>
+                                  <a href="https://www.truenas.com/managed-service-provider/">MSP</a>
+                                  <a href="https://www.truenas.com/manufacturing/">Manufacturing</a>
+                                  <a href="https://www.truenas.com/ai/">Research&nbsp;& AI</a>
+                                  <a href="https://www.truenas.com/media-creation/">Media&nbsp;& Entertainment</a>
+                              </div>
+                              <!-- Right Column -->
+                              <div class="truenas-menuitem-column">
+                                  <h3 class="truenas-column-header">Use Cases</h3>
+                                  <hr class="truenas-menudropdown-hr">
+                                  <a href="https://www.truenas.com/analytics/">Analytics</a>
+                                  <a href="https://www.truenas.com/backup/">Backup&nbsp;& Archival</a>
+                                  <a href="https://www.truenas.com/cloud/">Cloud</a>
+                                  <a href="https://www.truenas.com/data-mobility/">Data Mobility</a>
+                                  <a href="https://www.truenas.com/file-sharing/">File Sharing</a>
+                                  <a href="https://www.truenas.com/truecloud-backup/">TrueCloud Backup</a>
+                                  <a href="https://www.truenas.com/media-creation/">Media&nbsp;& Entertainment</a>
+                                  <a href="https://www.truenas.com/cctv/">Surveillance/CCTV</a>
+                                  <a href="https://www.truenas.com/veeam/">Veeam Backup</a>
+                                  <a href="https://www.truenas.com/virtualization/">Virtualization</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="truenas-menuitem" id="desktop-support">
+                      <button class="truenas-menubutton">Support&nbsp;& Resources <i class="fa fa-angle-down"></i></button>
+                      <div class="truenas-menudropdown truenas-menudropdown-wide">
+                          <div class="truenas-menuitem-columns">
+                              <!-- Left Column - Support -->
+                              <div class="truenas-menuitem-column">
+                                  <h3 class="truenas-column-header">Support</h3>
+                                  <hr class="truenas-menudropdown-hr">
+                                  <a href="https://www.truenas.com/support/" class="truenas-menuitem-link">
+                                      <div class="truenas-menuitem-text">
+                                          <b>Enterprise Support</b>
+                                          <p>For customers with active support contracts</p>
+                                      </div>
+                                  </a>
+                                  <a href="https://forums.truenas.com/" class="truenas-menuitem-link">
+                                      <div class="truenas-menuitem-text">
+                                          <b>Community Support</b>
+                                          <p>For peer-to-peer, forum support</p>
+                                      </div>
+                                  </a>
+                              </div>
+                              <!-- Middle Column - Resources -->
+                              <div class="truenas-menuitem-column">
+                                  <h3 class="truenas-column-header">Resources</h3>
+                                  <hr class="truenas-menudropdown-hr">
+                                  <a href="https://www.truenas.com/case-studies/">Case Studies</a>
+                                  <a href="https://www.truenas.com/datasheets/">Datasheets</a>
+                                  <a href="https://www.truenas.com/docs/">Documentation</a>
+                                  <a href="https://api.truenas.com/">TrueNAS API</a>
+                                  <a href="https://www.truenas.com/faq/">FAQ</a>
+                                  <a href="https://www.truenas.com/apps/">Apps</a>
+                                  <a href="https://www.truenas.com/blog/">TrueNAS Blogs</a>
+                                  <a href="https://www.truenas.com/software-status/">Software Status</a>
+                                  <a href="https://security.truenas.com/">TrueNAS Security</a>
+                                  <a href="https://www.truenas.com/solution-guides/">Solution Guides</a>
+                                  <a href="https://www.truenas.com/videos/">Videos</a>
+                                  <a href="https://portal.ixsystems.com/">TrueCommand Cloud</a>
+                                  <a href="https://www.truenas.com/reseller-network/">Reseller Network</a>
+                                  <a href="https://www.truenas.com/zfs/">ZFS Overview</a>
+                              </div>
+                              <!-- Right Column - Community -->
+                              <div class="truenas-menuitem-column">
+                                  <h3 class="truenas-column-header">Community</h3>
+                                  <hr class="truenas-menudropdown-hr">
+                                  <a href="https://www.truenas.com/truenas-community-edition/">TrueNAS Community Edition</a>
+                                  <a href="https://forums.truenas.com/">Community Forum</a>
+                                  <a href="https://discord.com/invite/truenas">Discord</a>
+                                  <a href="https://github.com/truenas/">TrueNAS GitHub</a>
+                                  <a href="https://www.truenasmerch.com/">TrueNAS Merch Store</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="truenas-menuitem" id="desktop-company">
+                      <button class="truenas-menubutton">Company <i class="fa fa-angle-down"></i></button>
+                      <div class="truenas-menudropdown">
+                          <a href="https://www.truenas.com/about-us/">About TrueNAS</a>
+                          <a href="https://www.truenas.com/truenas-awards/">Awards</a>
+                          <a href="https://www.truenas.com/careers/">Careers</a>
+                          <a href="https://www.truenas.com/contact-us/">Contact Us</a>
+                          <a href="https://www.truenas.com/newsroom/">Newsroom</a>
+                          <a href="https://www.truenas.com/clients/">Our Clients</a>
+                          <a href="https://www.truenas.com/reviews/">Reviews</a>
+                      </div>
+                  </div>
+                  </div>
+                  <div class="truenas-menuitem">
+                      <a href="https://www.truenas.com/get-quote/">
+                          <button class="truenas-quote-button">Get A Quote</button>
+                      </a>
+                  </div>
+              </div>
+          </div>
+  </header>
 
-<nav id="sitenav">
-    {{ partial "docs-nav" }}
-    {{ if .MenuEnabled }}
-    <label for="menu-control" class="gdoc-nav__control" id="leftnavbutton" tabindex="0" style="padding:0 1rem 0 1rem;">
-        <svg class="gdoc-icon gdoc_menu">
-            <title>{{ i18n "button_nav_open" }}</title>
-            <use xlink:href="#gdoc_menu"></use>
-        </svg>
-        <svg class="gdoc-icon gdoc_arrow_back">
-        <title>{{ i18n "button_nav_close" }}</title>
-        <use xlink:href="#gdoc_arrow_back"></use>
-        </svg>
-    </label>
-    {{ end }}
-    <label for="sidebar-right__control" class="sidebar-right__control" id="rightnavbutton" tabindex="0">
-        <svg class="gdoc-icon gdoc_path">
-            <title>{{ i18n "button_toc_open" }}</title>
-            <use xlink:href="#gdoc_path"></use>
-        </svg>
-    </label>
-    </nav>
-    
-<!-- Make stickymenu stay on the top of the page when the user scrolls -->
+<!-- Mobile Menu JavaScript -->
 <script>
-var options = {
-  root: null, // Use the viewport as the root
-  rootMargin: "0px",
-  threshold: 0, // When 0% of the element is visible
-};
+document.addEventListener('DOMContentLoaded', function() {
+  const hamburgerButton = document.querySelector('.truenas-hamburger-button');
+  const mobileDropdown = document.querySelector('.truenas-mobile-dropdown');
+  const closeButton = document.querySelector('.mobile-menu-close');
 
-var observer = new IntersectionObserver(callback, options);
-var linksrow = document.querySelector(".linksrow");
-var nav = document.getElementById("sitenav");
-var isSticky = false; // Track if the element is sticky
+  // Clone desktop dropdowns into mobile sections
+  const menuMapping = {
+    'products': 'desktop-products',
+    'solutions': 'desktop-solutions',
+    'support': 'desktop-support',
+    'company': 'desktop-company'
+  };
 
-observer.observe(linksrow);
+  Object.keys(menuMapping).forEach(function(mobileId) {
+    const mobileSection = document.querySelector('.mobile-menu-section[data-menu="' + mobileId + '"]');
+    const desktopItem = document.getElementById(menuMapping[mobileId]);
 
-function callback(entries, observer) {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      // The .linksrow element is in view, so remove sticky
-      if (isSticky) {
-		nav.classList.remove("sticky");
-        isSticky = false;
-      }
-    } else {
-      // The .linksrow element is out of view, so make it sticky
-      if (!isSticky) {
-        nav.classList.add("sticky");
-        isSticky = true;
+    if (mobileSection && desktopItem) {
+      const desktopDropdown = desktopItem.querySelector('.truenas-menudropdown');
+      if (desktopDropdown) {
+        const clonedDropdown = desktopDropdown.cloneNode(true);
+        mobileSection.appendChild(clonedDropdown);
       }
     }
   });
-}
-// Add behavior for right side toc panel to slide into view on small screens
-document.addEventListener('DOMContentLoaded', function() {
-    var sidebarRight = document.querySelector('.sidebar-right');
-    var sidebarControl = document.getElementById('sidebar-right__control');
-    var menuControl = document.getElementById('menu-control');
-    var gdocPage = document.querySelector('.gdoc-page');
-    var gdocNav = document.querySelector('.gdoc-nav');
 
-    sidebarControl.addEventListener('click', function() {
-        if (!sidebarControl.checked) {
-            menuControl.checked = false;
-            sidebarRight.style.transition = 'transform 0.3s ease';
-            gdocPage.style.transition = 'margin-right 0.3s ease, opacity 0.3s ease';
-
-            sidebarRight.style.transform = 'translateX(100%)';
-            gdocPage.style.opacity = '1';
-            gdocPage.style.marginRight = '0'; // Set margin-right to fill the space
-            sidebarRight.style.display = 'none'; // Hide the sidebar
-        } else {
-            sidebarRight.style.transition = 'transform 0.3s ease';
-            sidebarRight.style.transform = 'translateX(-3rem)';
-            sidebarRight.style.display = 'block'; // Show the sidebar
-        }
+  if (hamburgerButton && mobileDropdown) {
+    // Open mobile menu
+    hamburgerButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      mobileDropdown.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent body scroll
     });
 
-    menuControl.addEventListener('click', function() {
-        if (menuControl.checked) {
-            gdocPage.style.transition = 'opacity 0.3s ease';
+    // Close mobile menu
+    if (closeButton) {
+      closeButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        mobileDropdown.classList.remove('active');
+        document.body.style.overflow = '';
+        // Collapse all sections
+        document.querySelectorAll('.mobile-menu-section').forEach(function(section) {
+          section.classList.remove('expanded');
+        });
+      });
+    }
 
-            if (!sidebarControl.checked) {
-                gdocPage.style.opacity = '0.25';
-            } else {
-                sidebarRight.style.transition = 'transform 0.3s ease';
-                gdocPage.style.opacity = '0.25';
-                sidebarRight.style.transform = 'translateX(100%)';
-                sidebarRight.style.display = 'none'; // Hide the sidebar
-            }
-			sidebarControl.checked = false;
-        } else {
-            gdocPage.style.transition = 'opacity 0.3s ease';
-            gdocPage.style.opacity = '1';
-        }
+    // Toggle sections on click
+    const mobileSections = document.querySelectorAll('.mobile-menu-section');
+    mobileSections.forEach(function(section) {
+      const title = section.querySelector('.mobile-menu-title');
+      if (title) {
+        title.addEventListener('click', function(e) {
+          e.stopPropagation();
+          section.classList.toggle('expanded');
+        });
+      }
     });
+  }
 });
 </script>
-<!-- End sticky main_navbar -->
+
+<!-- TrueNAS Dropdowns Z-Index and Hover Management -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Fix TrueNAS dropdowns z-index and positioning
+  function forceDropdownZIndex() {
+    const dropdowns = document.querySelectorAll('.truenas-menudropdown');
+    dropdowns.forEach(dropdown => {
+      dropdown.style.setProperty('z-index', '9999', 'important');
+      dropdown.style.setProperty('position', 'absolute', 'important');
+      dropdown.style.setProperty('pointer-events', 'auto', 'important');
+    });
+
+    // Ensure TrueNAS header has high stacking context
+    const truenasHeader = document.querySelector('#TrueNASHeader');
+    if (truenasHeader) {
+      truenasHeader.style.setProperty('z-index', '2000', 'important');
+      truenasHeader.style.setProperty('position', 'relative', 'important');
+    }
+
+    // Ensure GeekDoc nav has lower z-index
+    const geekdocNav = document.querySelector('#sitenav');
+    if (geekdocNav) {
+      geekdocNav.style.setProperty('z-index', '1030', 'important');
+    }
+  }
+
+  // Apply immediately
+  forceDropdownZIndex();
+  setTimeout(forceDropdownZIndex, 100);
+
+  // Enhanced dropdown hover behavior with proper positioning
+  const menuItems = document.querySelectorAll('.truenas-menuitem');
+
+  menuItems.forEach(item => {
+    const dropdown = item.querySelector('.truenas-menudropdown');
+
+    if (dropdown) {
+      let hoverTimeout;
+
+      function showDropdown() {
+        clearTimeout(hoverTimeout);
+        item.classList.add('force-show');
+        dropdown.style.setProperty('display', 'block', 'important');
+        dropdown.style.setProperty('z-index', '9999', 'important');
+        dropdown.style.setProperty('position', 'absolute', 'important');
+        dropdown.style.setProperty('visibility', 'visible', 'important');
+        dropdown.style.setProperty('opacity', '1', 'important');
+      }
+
+      function hideDropdown() {
+        item.classList.remove('force-show');
+        dropdown.style.setProperty('display', 'none', 'important');
+      }
+
+      // Show on button hover
+      item.addEventListener('mouseenter', showDropdown);
+
+      // Keep visible when in dropdown area
+      dropdown.addEventListener('mouseenter', showDropdown);
+
+      // Hide when leaving button with delay
+      item.addEventListener('mouseleave', () => {
+        hoverTimeout = setTimeout(() => {
+          if (!dropdown.matches(':hover')) {
+            hideDropdown();
+          }
+        }, 50);
+      });
+
+      // Hide when leaving dropdown
+      dropdown.addEventListener('mouseleave', () => {
+        hoverTimeout = setTimeout(() => {
+          hideDropdown();
+        }, 50);
+      });
+    }
+  });
+});
+</script>
