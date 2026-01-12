@@ -2808,3 +2808,69 @@ section.row:has(.feature-card) .container {
   display: inline-block; // Ensure gradient works properly
   font-weight: inherit; // Maintain parent font weight
 }
+
+// Grid layout for doc-card sections (used in landing pages)
+.docs-sections {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 2rem !important;
+  padding: 1rem !important;
+}
+
+@media screen and (max-width: 99rem) {
+  .docs-sections {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media screen and (max-width: 83rem) {
+  .docs-sections {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media screen and (max-width: 50rem) {
+  .docs-sections {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.section-box {
+  position: relative;
+  padding: 1rem;
+
+  p {
+    text-align: center !important;
+    line-height: 1rem !important;
+    margin: 0.5rem 0 0.5rem 0 !important;
+  }
+}
+
+// Card image styling
+.box-image {
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  text-align: center;
+}
+
+.prod-card-img {
+  width: 80px;
+  height: auto !important;
+  object-fit: contain;
+}
+
+// Card content styling
+.section-tab-content {
+  text-align: center;
+
+  .doctype-label {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+.ixprods {
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  padding-bottom: 0 !important;
+}
