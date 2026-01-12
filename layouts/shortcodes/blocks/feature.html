@@ -46,7 +46,12 @@
   {{- end -}}
   {{- if $icon -}}
   <div class="mb-4 h1">
-    {{- if hasPrefix $icon "material:" -}}
+    {{- if hasPrefix $icon "image:" -}}
+      {{- $imagePath := strings.TrimPrefix "image:" $icon -}}
+      {{- with resources.Get $imagePath -}}
+        <img src="{{ .RelPermalink }}" alt="" style="width: 3rem; height: 3rem; object-fit: contain;">
+      {{- end -}}
+    {{- else if hasPrefix $icon "material:" -}}
       {{- $materialIcon := strings.TrimPrefix "material:" $icon -}}
       <span class="material-icons-outlined" style="font-size: 3rem; color: inherit;">{{ $materialIcon }}</span>
     {{- else -}}
