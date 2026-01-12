@@ -1,0 +1,18 @@
+{{- /* Support named parameters (preferred) and positional (legacy) */ -}}
+{{- $type := .Get "type" | default (.Get 0) | default "note" -}}
+{{- $title := .Get "title" | default "" -}}
+{{- $content := .Inner | strings.TrimSpace -}}
+
+{{- $type = upper $type | printf "[!%s]" -}}
+
+{{- $markdown := printf "> %s" $type -}}
+{{- if $title -}}
+  {{- $markdown = printf "> %s %s" $type $title -}}
+{{- end -}}
+
+{{- /* Add each line of content as a blockquote line */ -}}
+{{- range split $content "\n" -}}
+  {{- $markdown = printf "%s\n> %s" $markdown . -}}
+{{- end -}}
+
+{{ .Page.RenderString $markdown }}

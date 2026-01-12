@@ -1,0 +1,69 @@
+{{- $icon := .Get "icon" -}}
+{{- $parent := .Parent -}}
+{{- $isRowContext := false -}}
+{{- if $parent -}}
+  {{- if eq ($parent.Get "type") "row" -}}
+    {{- $isRowContext = true -}}
+  {{- end -}}
+{{- end -}}
+{{- $colClass := "col-lg-4" -}}
+{{- if $isRowContext -}}
+  {{- $colClass = "col-lg-3" -}}
+{{- end -}}
+{{- $url := .Get "url" -}}
+{{- $page := "" -}}
+{{- if $url -}}
+  {{- $page = site.GetPage $url -}}
+{{- end -}}
+
+{{- $doctype := .Get "doctype" | default (cond (and $page $page.Params.doctype) $page.Params.doctype "none") | lower -}}
+{{- $labelColor := "" -}}
+{{- $tooltip := "" -}}
+{{- $showLabel := true -}}
+
+{{- if eq $doctype "none" -}}
+  {{- $showLabel = false -}}
+{{- else if eq $doctype "tutorial" -}}
+  {{- $labelColor = "label-tutorial" -}}
+  {{- $tooltip = "Hands-on introduction for new users or those looking to deepen their knowledge" -}}
+{{- else if eq $doctype "how-to" -}}
+  {{- $labelColor = "label-howto" -}}
+  {{- $tooltip = "Step-by-step guides covering key operations and common tasks" -}}
+{{- else if eq $doctype "reference" -}}
+  {{- $labelColor = "label-reference" -}}
+  {{- $tooltip = "Description of UI screens and fields, including technical information like requirements and specifications" -}}
+{{- else if eq $doctype "foundations" -}}
+  {{- $labelColor = "label-foundations" -}}
+  {{- $tooltip = "Overviews and deeper dives into key topics, concepts, and clarifications" -}}
+{{- end -}}
+
+<div class="{{ $colClass }} mb-5 mb-lg-0 text-center feature-card {{ if $showLabel }}has-label{{ else }}no-label{{ end }}" style="position: relative; padding-top: {{ if $showLabel }}2.8rem{{ else }}0rem{{ end }};" {{ if $url }}data-href="{{ $url }}"{{ end }}>
+  {{- if and $showLabel $doctype -}}
+    <div class="doctype-label {{ $labelColor }}">
+      {{ $doctype | title }}
+      <span class="custom-tooltip">{{ $tooltip }}</span>
+    </div>
+  {{- end -}}
+  {{- if $icon -}}
+  <div class="mb-4 h1">
+    {{- if hasPrefix $icon "material:" -}}
+      {{- $materialIcon := strings.TrimPrefix "material:" $icon -}}
+      <span class="material-icons-outlined" style="font-size: 3rem; color: inherit;">{{ $materialIcon }}</span>
+    {{- else -}}
+      <i class="{{ if not (or (hasPrefix $icon "fas ") (hasPrefix $icon "fab ")) }}fas {{ end }}{{ $icon }}"></i>
+    {{- end -}}
+  </div>
+  {{- end -}}
+  {{- if $url -}}
+  <a href="{{ $url }}" class="feature-card-link">
+  {{- end -}}
+  <h4 class="h3">
+    {{- .Get "title" | markdownify -}}
+  </h4>
+  {{- if $url -}}
+  </a>
+  {{- end -}}
+  <div class="mb-0">
+  {{ .Inner }}
+  </div>
+</div>

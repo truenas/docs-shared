@@ -1,253 +1,222 @@
-# TrueNAS Hugo Module Implementation Guide
+# TrueNAS Docs-Shared Module (TrueShared2026)
 
-## Quick Reference
+## Overview
 
-All TrueNAS documentation sites use the shared `docs-shared` Hugo module for common resources while maintaining site-specific functionality through local overrides.
+The `docs-shared` module provides a shared theme and components for TrueNAS documentation sites. This `TrueShared2026` branch contains the improved theme extracted from `connect-docs`, built on Docsy v0.13.0.
 
-## Docs-Shared Module Contents
+**This branch will eventually replace the `main` branch when legacy documentation sites are retired.**
 
-This section details what shared resources are available in the `docs-shared` module. When you need to modify common styling, templates, or assets that should be used across multiple sites, these are the files you'll be working with.
+## What's Included
 
-### Core Files and Directories
+### Theme Components
 
-#### `/docs-shared/static/`
-- **`custom.css`** (3,319 lines) - Merged CSS from multiple sites
-  - Contains styling from documentation, apps-web, and security sites
-  - Excludes security site's dark mode override rules
-  - Includes doctype label system, ribbons, grid layouts, and responsive design
-- **`ixsystems_logo_130_30.svg`** - Shared company logo
-- **`truenas_open_storage-logo-full-color-rgb-1.svg`** - Shared product logo
+#### Layouts & Partials
+- **Navbar** (`/layouts/partials/navbar.html`) - Custom TrueNAS navigation with docs-hub dropdown
+- **Footer** (`/layouts/partials/footer.html`) - Modern footer matching TrueNAS branding
+- **TrueNAS Header** (`/layouts/partials/truenas-header.html`) - Site header with responsive menu
+- **Theme Toggle** (`/layouts/partials/navbar-theme-toggle.html`) - Light/dark mode switcher
+- **Search** (`/layouts/partials/search-pagefind.html`, `search-simple.html`) - Pagefind integration
+- **Hooks** (`/layouts/partials/hooks/head-end.html`, `body-start.html`) - CSS/JS injection points (2178 lines!)
+- **Print** (`/layouts/partials/print/render.html`) - Print-optimized layouts
+- **Utilities** (`/layouts/partials/utils/doctype-label.html`) - Document type badges
 
-#### `/docs-shared/layouts/`
-- **`partials/telemetry-awards.html`** - Hugo template for app popularity badges
-  - Fetches telemetry data from API
-  - Displays gold/silver/bronze medals based on deployment counts
-  - Used by apps-web site for showing popular applications
+#### Shortcodes (18 total)
+- **Layout**: `blocks/feature.html`, `doc-card.html` - Card grids for landing pages
+- **Content**: `codeblock.html`, `expand.html`, `trueimage.html`, `truetable.html`
+- **Navigation**: `children.html`, `changelog-navigator.html`
+- **Documentation**: `field.html`, `enterprise.html`, `hint.html`, `include.html`, `pageinfo.html`
+- **Rendering**: `render-screen.html`, `render-section.html`, `screen.html`, `section.html`
+- **Utilities**: `themed-icon.html`
 
-#### `/docs-shared/scripts/`
-- Shared build and cleanup scripts from apps-web
-- Python scripts for app documentation generation
+#### Styling
+- **SCSS Variables** (`/assets/scss/_variables_project.scss`) - TrueNAS colors and theme (2810 lines)
+  - Primary: `#0095d5` (TrueNAS Blue)
+  - Secondary: `#71BF44` (TrueNAS Green)
+- **Bootstrap Overrides** (`/assets/scss/_variables_project_after_bs.scss`) - Table styling
+- **Utilities** (`/assets/scss/support/_utilities.scss`) - Helper classes
 
-#### Other Directories
-- `/docs-shared/assets/` - Empty (reserved for future shared assets)
-- `/docs-shared/data/` - Empty (reserved for future shared data files)
-- `/docs-shared/go.mod` - Hugo module configuration
+#### Assets
+- **Icons** (`/assets/icons/`) - SVG icons (API, apps, TrueNAS mark)
+- **Brand Images** (`/static/images/`) - Docs hub wordmarks, logos
 
-## Site-Specific Local Overrides
+## How to Use This Module
 
-Each site has its own override file that contains styling and functionality that should NOT be shared with other sites. When you need to modify something that's specific to one site's design or behavior, look for the appropriate override file below. These files load after the shared CSS, so they can override or extend the common styling.
+### Import in Hugo Site
 
-### Apps-Web Overrides (`/apps-web/static/css/apps-web-overrides.css`)
+Add to your `hugo.toml` or `config.toml`:
 
-**Purpose**: Maintains apps-web specific functionality that shouldn't be shared across all sites.
+```toml
+[module]
+  [[module.imports]]
+    path = "github.com/truenas/docs-shared"
+    # For local development:
+    # replace = "../docs-shared"
 
-**Key Override Categories**:
-
-1. **Section Box Styling**
-   - Restores missing `position: relative` and `padding: 1rem` properties
-   - Fixes external link and material icon styling
-
-2. **Ribbon System** (Kind Labels)
-   - Absolute positioning for ribbons (Official, Project, Community, etc.)
-   - Color coding: Green default, Blue for Official
-   - Proper z-index and border radius styling
-
-3. **Image Sizing Fixes**
-   - `.app-card-img`: 10em width, 10rem height for app catalog cards
-   - `.prod-card-img`: 80px width, auto height for doc cards
-   - Overrides shared CSS that forced 15em height
-
-4. **Telemetry Awards Positioning**
-   - Popular app badges positioned absolutely within cards
-   - Specific dimensions and placement for gold/silver/bronze medals
-
-5. **Grid Layout System**
-   - 4-column responsive grid for docs-sections
-   - Media queries for 3-col (99rem), 2-col (83rem), 1-col (50rem)
-   - Proper gap and padding specifications
-
-6. **Typography and Spacing**
-   - Paragraph margins and line-height for section boxes
-   - Prevents template dynamic padding from being overridden
-   - Maintains proper spacing for doctype labels and ribbons
-
-### API Docs Site Overrides (`/api-docs/static/css/api-docs-overrides.css`)
-
-**Purpose**: Maintains API docs unique GeekDoc theme design and TrueNAS branding while using shared module.
-
-**Key Override Categories**:
-
-1. **TrueNAS Branding**
-   - Inter font family consistency across all elements
-   - Brand logo sizing (max-width: 8em)
-   - Header icon dimensions (1.5rem x 1.5rem)
-
-2. **API Version Buttons**
-   - Grid layout for version selection (auto-fit, minmax 120px)
-   - Color coding: Current (blue), Latest Maintenance (green), Previous (gray), Next (blue)
-   - Hover effects and transitions
-   - Responsive design for mobile devices
-
-3. **Apps Banner Styling** 
-   - Background image from `/images/Apps-Hero-Bg.png`
-   - Proper typography (42px heading, 25px text, 19px button)
-   - Flexbox layout with image positioning
-   - Green download button (#71bf44) with hover states
-
-4. **Responsive Adjustments**
-   - Mobile breakpoints for version grid and banner layout
-   - Font size scaling for smaller screens
-   - Image positioning adjustments
-
-**Additional API Docs Files**:
-- `layouts/partials/site-header.html` - TrueNAS branded header
-- `layouts/partials/head/custom.html` - CSS override link
-- `layouts/shortcodes/api_versions.html` - Restored from GitHub
-
-### Security Site Overrides (`/security/hugo-site/static/css/security-overrides.css`)
-
-**Purpose**: Maintains security site's unique styling and functionality while using shared module resources.
-
-**Key Override Categories**:
-
-1. **TrueNAS Brand Font Import**
-   - Imports "DIN 2014" font family from Google Fonts
-   - Overrides shared CSS "Inter" font for headers and brand elements
-   - Liberation Sans for body text with proper rendering optimizations
-
-2. **Container Width and Navigation**
-   - Sets `max-width: 90rem` instead of shared CSS 100rem
-   - Hides navigation sidebar (`gdoc-nav`) for simplified layout
-
-3. **Security Sections Grid**
-   - 4-column responsive grid layout for security product boxes
-   - Media queries: 2-col (50rem), 1-col (25rem)
-   - Card styling with shadows, hover effects, and rounded corners
-   - Instant color changes (no transitions) for consistent hover behavior
-
-4. **Security-Specific Data Tables**
-   - Table container with 40rem max-height and scroll
-   - Full-width table elements to match container
-   - Expandable row functionality for CVE details
-   - Advisory details section styling
-   - Response impact color coding (critical=red, medium=yellow, low=green)
-
-5. **Custom Checkbox and Form Elements**
-   - Blue-themed checkboxes matching TrueNAS branding (#0095D5)
-   - CVE search input with light mode forced styling
-   - Custom appearance with opacity transitions and focus states
-
-6. **Sortable Table Elements**
-   - Search box styling with full-width constraints
-   - Sort indicator arrows (▲ for asc, ▼ for desc)
-   - SBOM download button (hidden by default)
-
-7. **Light Mode Forced Elements**
-   - Forces light mode for all gdoc-expand elements (containers, heads, content)
-   - CVE search input and button styling (white backgrounds, proper contrast)
-   - Prevents automatic dark mode activation on security site
-   - Comprehensive background overrides for all nested elements
-
-8. **Layout and Width Overrides**
-   - Footer spans full viewport width (removes margin constraints at large screens)
-   - Table containers and all table elements span full width
-   - Eliminates white margins that appear above 1450px viewport width
-
-**Additional Security Site Files**:
-- `hugo-site/layouts/partials/head/custom.html` - CSS override link
-
-## Dynamic Template System
-
-The shared module includes Hugo templates that provide dynamic functionality across sites. Understanding how these work is important when troubleshooting layout issues or adding new content types.
-
-### Doc-Card Template Features
-
-The shared `doc-card.html` shortcode provides the card layout system used across documentation sites. It includes:
-
-1. **Dynamic Padding Calculation**
-   ```hugo
-   padding-top: 
-   {{ if and $showLabel $showRibbon }}3rem
-   {{ else if $showLabel }}2.8rem  
-   {{ else if $showRibbon }}1.5rem
-   {{ else }}0rem
-   {{ end }};
-   ```
-
-2. **Ribbon Types** (Kind Labels)
-   - `official` - Blue ribbon for TrueNAS team docs
-   - `project` - Green ribbon for upstream project docs  
-   - `community` - Green ribbon for community docs
-   - `post` - Green ribbon for forum/community posts
-   - `blog` - Green ribbon for blog posts
-
-3. **Doctype Labels** (Diataxis System)
-   - `tutorial` - Green border (#75bf44)
-   - `how-to` - Blue border (#31BEEC)
-   - `reference` - Purple border (#A593E0)
-   - `foundations` - Orange border (#FF9800)
-
-## Jenkins Pipeline Integration
-
-The Hugo module system is integrated into Jenkins deployment pipelines to automatically pull the latest shared resources during builds. This means that when you update the `docs-shared` module, all sites will automatically get those changes on their next deployment - no manual intervention required.
-
-All implementing sites include Hugo module updates in their Jenkins pipelines:
-
-```bash
-# Update Hugo modules before building
-hugo mod clean
-hugo mod get -u
+  [[module.imports]]
+    path = "github.com/google/docsy"
+    disable = false
 ```
 
-**Updated Pipeline Files**:
-- `/documentation/jenkins/update-master`
-- `/documentation/jenkins/update-dev1` 
-- `/documentation/jenkins/update-scale-next`
-- `/apps-web/jenkins/update-main`
-- `/api-docs/jenkins/update-main`
-- `/security/jenkins/security-hugo.sh`
+**Important**: Import `docs-shared` BEFORE Docsy to ensure correct template precedence.
 
-## Local Development Commands
+### Update go.mod
 
-While Jenkins automatically updates modules during deployment, when developing locally you need to manually update the modules to get the latest shared resources. This ensures your local testing environment matches what will be deployed.
+```go
+require (
+    github.com/truenas/docs-shared v0.0.0-00000000000000-000000000000 // indirect
+)
 
-```bash
-# Update modules (run before local testing)
-cd /path/to/your/site
-hugo mod clean
-hugo mod get -u
-
-# Verify module loaded
-hugo mod graph
+// For local development:
+replace github.com/truenas/docs-shared => ../docs-shared
 ```
 
-**When to Run Manual Updates**:
-- After changes are made to the docs-shared module (to pull in latest changes)
-- When troubleshooting CSS or template issues that might be fixed in newer shared resources
-- When you specifically need the very latest shared resources for your work
+### Initialize Modules
 
-**Note**: Jenkins handles module updates automatically during deployment, so manual updates are only needed for local development testing.
+```bash
+hugo mod get github.com/truenas/docs-shared
+hugo mod get -u  # Update all modules
+hugo mod clean   # Clear module cache
+```
 
-## File Location Quick Reference
+## Site-Specific Customization
 
-This section provides a quick lookup for finding specific files when you need to make updates. Check the shared resources first - if what you need isn't there, look in the appropriate site's local override files.
+### Override Templates
 
-### Shared Resources (docs-shared)
-- **Main CSS**: `/docs-shared/static/custom.css`
-- **App Badges**: `/docs-shared/layouts/partials/telemetry-awards.html`
-- **Logos**: `/docs-shared/static/ixsystems_logo_130_30.svg`
+To customize any template, create the same file path in your site's `/layouts/` directory:
 
-### Local Overrides
-- **Apps-Web**: `/apps-web/static/css/apps-web-overrides.css`
-- **API Docs**: `/api-docs/static/css/api-docs-overrides.css`
-- **Security**: `/security/hugo-site/static/css/security-overrides.css`
+```
+your-site/
+└── layouts/
+    └── partials/
+        └── navbar.html  ← Overrides docs-shared/layouts/partials/navbar.html
+```
 
-### Pipeline Files
-- **Documentation**: `/documentation/jenkins/update-*`
-- **Apps-Web**: `/apps-web/jenkins/update-main`
-- **API Docs**: `/api-docs/jenkins/update-main`
-- **Security**: `/security/jenkins/security-hugo.sh`
+### Override Styles
+
+Create site-specific SCSS with custom values:
+
+```scss
+// your-site/assets/scss/_variables_project.scss
+$primary: #0099dd;  // Custom blue
+@import "docs-shared/scss/variables_project.scss";
+```
+
+### Configure via hugo.toml
+
+```toml
+[params]
+  # Site-specific settings
+  title = "Your Site"
+  logo = "/images/your-logo.svg"
+
+  [params.search]
+    siteName = "Your Site"
+    siteKey = "yoursite"
+
+  [params.ui]
+    showLightDarkModeMenu = true
+```
+
+## Sites Using This Module
+
+- **TrueNAS Docs Hub** (`/docs`) - Landing page with card grid
+- **TrueNAS Connect** (`/connect-docs`) - Connect documentation
+
+## Migration from Local Theme
+
+If you have a site with local theme files, follow these steps:
+
+1. **Backup**: Create a backup branch
+2. **Update configs**: Add module imports to `hugo.toml` and `go.mod`
+3. **Remove local files**: Delete layouts/partials/shortcodes now provided by module
+4. **Test**: Build site and compare to baseline
+5. **Deploy**: Merge when tests pass
+
+See the implementation plan for detailed migration steps.
+
+## Development Workflow
+
+### Local Module Development
+
+```bash
+# Make changes in docs-shared
+cd /path/to/docs-shared
+
+# Test in consuming site
+cd /path/to/your-site
+# Ensure go.mod has: replace github.com/truenas/docs-shared => ../docs-shared
+hugo serve
+
+# Commit when ready
+cd /path/to/docs-shared
+git add .
+git commit -m "Update navbar dropdown"
+git push origin TrueShared2026
+```
+
+### Version Pinning
+
+For production stability, pin to specific commit:
+
+```bash
+hugo mod get github.com/truenas/docs-shared@abc123def
+```
+
+Or in `go.mod`:
+
+```go
+require github.com/truenas/docs-shared v0.0.0-20260115123456-abcdef123456
+```
+
+## Theme Features
+
+### Responsive Navigation
+- Desktop: Full navbar with dropdown menus
+- Mobile: Hamburger menu with slide-out drawer
+
+### Light/Dark Mode
+- Automatic theme toggle
+- Preserves user preference
+- Synced across pages
+
+### Multi-Site Search
+- Pagefind integration
+- Cross-documentation search
+- Filtered by site, section, tags
+
+### Documentation Cards
+- Hero sections with cover images
+- Card grids for landing pages
+- Doctype labels (Tutorial/How-to/Reference)
+
+### Table of Contents
+- Auto-generated from headings
+- Scroll-based highlighting
+- Sticky positioning
+
+## Requirements
+
+- **Hugo**: v0.146.0+ Extended
+- **Docsy**: v0.13.0+
+- **Bootstrap**: v5.3.8 (via Docsy)
+- **Node.js**: v20.x (for PostCSS/Autoprefixer)
+
+## Future Plans
+
+When legacy GeekDoc sites are retired:
+1. Merge `TrueShared2026` to `main`
+2. Migrate remaining sites (api-docs, apps-web, security)
+3. Archive old GeekDoc-based branches
+
+## Support
+
+For questions or issues:
+- Check the implementation plan: `/home/dpizappi/.claude/plans/elegant-purring-cook.md`
+- Review connect-docs source: `/mnt/c/Users/iXUser/Documents/GitHub/connect-docs`
+- File issues in the truenas/docs-shared repository
 
 ---
 
-*Updated: 2025-01-08
+**Version**: TrueShared2026 Branch
+**Last Updated**: 2026-01-12
+**Based On**: TrueNAS Connect Theme (Docsy v0.13.0)

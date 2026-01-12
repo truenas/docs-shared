@@ -1,0 +1,106 @@
+/*
+Projects can override this file. For details, see:
+https://www.docsy.dev/docs/adding-content/lookandfeel/#project-style-files
+*/
+
+/* TrueNAS Custom Table Styling (truetable shortcode) */
+.truetable {
+  border-collapse: collapse;
+  margin: 0 auto;
+  
+  // Target the actual table element inside the div
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    
+    td, th {
+      border: 0.5px solid $primary;
+      padding: 0.5rem;
+    }
+    
+    th {
+      text-align: left;
+      font-size: 1.0625rem; // 17px converted to rem
+    }
+    
+    tbody tr:hover {
+      background-color: $light !important;
+      color: white !important;
+      
+      td {
+        background-color: $light !important;
+        color: white !important;
+      }
+    }
+    
+    tbody tr:nth-child(even):hover {
+      background-color: $light !important;
+      color: white !important;
+      
+      td {
+        background-color: $light !important;
+        color: white !important;
+      }
+    }
+    
+    thead tr:hover {
+      background-color: transparent !important;
+      
+      th {
+        background-color: transparent !important;
+      }
+    }
+  }
+}
+
+// Additional fallback for direct table styling
+.truetable td, .truetable th {
+  border: 0.5px solid $primary;
+  padding: 0.5rem;
+}
+
+.truetable th {
+  text-align: left;
+  font-size: 1.0625rem;
+}
+
+.truetable tbody tr:hover {
+  background-color: $primary !important;
+  color: white !important;
+}
+
+.truetable tbody tr:hover td {
+  background-color: $primary !important;
+  color: white !important;
+}
+
+.truetable tbody tr:nth-child(even):hover {
+  background-color: $primary !important;
+  color: white !important;
+}
+
+.truetable tbody tr:nth-child(even):hover td {
+  background-color: $primary !important;
+  color: white !important;
+}
+
+.truetable thead tr:hover {
+  background-color: transparent !important;
+}
+
+.truetable thead tr:hover th {
+  background-color: transparent !important;
+}
+
+/* Optional: Docsy alert compatibility for enterprise shortcodes */
+.alert .truenas-enterprise__text .truetable tr {
+  background-color: rgba(134, 142, 150, 0.05);
+  
+  &:hover {
+    background-color: #e6e6e6 !important;
+  }
+  
+  &:nth-child(even) {
+    background-color: #f3f9fd;
+  }
+}

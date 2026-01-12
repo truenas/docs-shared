@@ -1,0 +1,13 @@
+{{- $field   := (.Get 0 | anchorize) -}}
+{{- $screen  := .Page.Scratch.Get "screen"  | default "NO_SCREEN"   -}}
+{{- $section := .Page.Scratch.Get "section" | default "NO_SECTION" -}}
+{{- $doctype := .Page.Params.doctype | default "NO_TYPE" -}}
+
+<div id="{{ $doctype }}.{{ $screen }}.{{ $section }}.{{ $field }}" class="ui-field">
+  {{- $content := .Inner | markdownify -}}
+  {{- if not (hasPrefix $content "<") -}}
+    <p>{{ $content }}</p>
+  {{- else -}}
+    {{ $content }}
+  {{- end -}}
+</div>

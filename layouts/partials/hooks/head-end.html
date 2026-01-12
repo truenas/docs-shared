@@ -1,0 +1,2178 @@
+<!-- Favicons -->
+<link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
+<link rel="icon" type="image/x-icon" href="/favicons/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+<link rel="manifest" href="/favicons/site.webmanifest">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Find the TOC sidebar container
+  const tocSidebar = document.querySelector('.td-sidebar-toc');
+  if (!tocSidebar) return;
+
+  // Check if there's already a functional TOC with our structure
+  const existingTOC = document.querySelector('#TableOfContents');
+  if (existingTOC && existingTOC.closest('.td-toc') && existingTOC.querySelector('a[data-heading-id]')) return;
+
+  // Remove Hugo's default TOC if it exists
+  const existingTocDiv = tocSidebar.querySelector('.td-toc');
+  if (existingTocDiv) {
+    existingTocDiv.remove();
+  }
+  
+  // Find all headings in main content (h2 and below, skip h1 page title)
+  const mainContent = document.querySelector('main .td-content');
+  if (!mainContent) return;
+  
+  const headings = mainContent.querySelectorAll('h2, h3, h4, h5, h6');
+  if (headings.length === 0) return;
+  
+  // Create TOC structure with proper hierarchy
+  const tocDiv = document.createElement('div');
+  tocDiv.className = 'td-toc';
+  
+  const tocNav = document.createElement('nav');
+  tocNav.id = 'TableOfContents';
+  
+  // Build hierarchical TOC structure
+  let tocHTML = '';
+  let currentLevel = 0;
+  let levelStack = [];
+  
+  headings.forEach((heading, index) => {
+    const level = parseInt(heading.tagName.substring(1)) - 1; // Convert h2->1, h3->2, etc.
+    const text = heading.textContent.trim();
+    const anchor = heading.id;
+    
+    if (!anchor) return;
+    
+    // Handle level changes
+    if (level > currentLevel) {
+      // Opening new levels
+      while (currentLevel < level) {
+        if (currentLevel === 0) {
+          tocHTML += '<ul>';
+        } else {
+          tocHTML += '<li><ul>';
+          levelStack.push('</ul></li>');
+        }
+        currentLevel++;
+      }
+    } else if (level < currentLevel) {
+      // Closing levels
+      while (currentLevel > level) {
+        if (levelStack.length > 0) {
+          tocHTML += levelStack.pop();
+        }
+        currentLevel--;
+      }
+    } else if (index > 0) {
+      // Same level, close previous item
+      tocHTML += '</li>';
+    }
+    
+    // Add the current heading
+    tocHTML += `<li><a href="#${anchor}" data-heading-id="${anchor}">${text}</a>`;
+    
+    // Check if this is the last item or if next item is at same/lower level
+    const nextIndex = index + 1;
+    if (nextIndex >= headings.length || 
+        (nextIndex < headings.length && parseInt(headings[nextIndex].tagName.substring(1)) - 1 <= level)) {
+      tocHTML += '</li>';
+    }
+  });
+  
+  // Close remaining levels
+  while (levelStack.length > 0) {
+    tocHTML += levelStack.pop();
+  }
+  tocHTML += '</ul>';
+  
+  tocNav.innerHTML = tocHTML;
+  tocDiv.appendChild(tocNav);
+  
+  // Insert after page meta if it exists, otherwise at the beginning
+  const pageMeta = tocSidebar.querySelector('.td-page-meta');
+  if (pageMeta) {
+    pageMeta.insertAdjacentElement('afterend', tocDiv);
+  } else {
+    tocSidebar.insertBefore(tocDiv, tocSidebar.firstChild);
+  }
+  
+  // Set up scroll-based active section highlighting
+  const tocLinks = tocNav.querySelectorAll('a');
+  const headingElements = Array.from(headings).filter(h => h.id);
+  
+  function updateActiveSection() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    // Find the current section based on scroll position
+    let activeHeading = null;
+    
+    // Check if we're at the bottom of the page
+    if (scrollTop + windowHeight >= documentHeight - 10) {
+      activeHeading = headingElements[headingElements.length - 1];
+    } else {
+      // Find the heading that's currently in view
+      for (let i = headingElements.length - 1; i >= 0; i--) {
+        const heading = headingElements[i];
+        const rect = heading.getBoundingClientRect();
+        
+        // Consider a heading active if it's above the middle of the viewport
+        if (rect.top <= windowHeight * 0.3) {
+          activeHeading = heading;
+          break;
+        }
+      }
+    }
+    
+    // Update active states
+    tocLinks.forEach(link => {
+      link.classList.remove('active');
+      const parentLi = link.closest('li');
+      if (parentLi) {
+        parentLi.classList.remove('active', 'active-path');
+      }
+    });
+    
+    if (activeHeading) {
+      // Try to find link by data-heading-id first, then fallback to href
+      let activeLink = tocNav.querySelector(`a[data-heading-id="${activeHeading.id}"]`);
+      if (!activeLink) {
+        activeLink = tocNav.querySelector(`a[href="#${activeHeading.id}"]`);
+      }
+      
+      if (activeLink) {
+        activeLink.classList.add('active');
+        const parentLi = activeLink.closest('li');
+        if (parentLi) {
+          parentLi.classList.add('active');
+        }
+        
+        // Also mark parent sections as active-path
+        let currentParent = parentLi?.parentElement?.closest('li');
+        while (currentParent) {
+          currentParent.classList.add('active-path');
+          currentParent = currentParent.parentElement?.closest('li');
+        }
+      }
+    }
+  }
+  
+  // Throttle scroll events for performance
+  let scrollTimeout;
+  function throttledUpdateActiveSection() {
+    if (scrollTimeout) return;
+    scrollTimeout = setTimeout(() => {
+      updateActiveSection();
+      scrollTimeout = null;
+    }, 16); // ~60fps
+  }
+  
+  // Set up event listeners
+  window.addEventListener('scroll', throttledUpdateActiveSection);
+  window.addEventListener('resize', throttledUpdateActiveSection);
+  
+  // Initial update
+  updateActiveSection();
+});
+
+// Force essentials section to always stay expanded
+document.addEventListener('DOMContentLoaded', function() {
+  const sidebar = document.querySelector('.td-sidebar-nav');
+  if (sidebar) {
+    
+    // Try multiple selectors to find the essentials section
+    const possibleSelectors = [
+      '#m-docsessentials-li',
+      'li[id*="essentials"]',
+      '.td-sidebar-nav__section:has(#m-docsessentials)',
+      'li:has(#m-docsessentials)'
+    ];
+    
+    let essentialsSection = null;
+    possibleSelectors.forEach(selector => {
+      try {
+        const el = sidebar.querySelector(selector);
+        if (el) {
+          essentialsSection = el;
+        }
+      } catch (e) {
+        // Some selectors might not be supported
+      }
+    });
+    
+    // Also try walking up from the essentials link
+    const essentialsLink = sidebar.querySelector('#m-docsessentials');
+    if (essentialsLink) {
+      const parentLi = essentialsLink.closest('li');
+      if (parentLi) {
+        essentialsSection = parentLi;
+      }
+    }
+    
+    if (essentialsSection) {
+      // Look for any ul within this section
+      const essentialsUl = essentialsSection.querySelector('ul');
+      
+      if (essentialsUl) {
+        function forceExpand() {
+          essentialsUl.classList.remove('collapse');
+          essentialsUl.classList.add('show');
+          essentialsUl.style.display = 'block';
+          essentialsUl.style.visibility = 'visible';
+        }
+        
+        forceExpand();
+        
+        // Set up mutation observer to catch any attempts to collapse it
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.target === essentialsUl && mutation.type === 'attributes') {
+              forceExpand();
+            }
+          });
+        });
+        
+        observer.observe(essentialsUl, {
+          attributes: true,
+          attributeFilter: ['class', 'style']
+        });
+      }
+    }
+  }
+});
+</script>
+
+<style>
+/* Enhanced TOC styles */
+.td-toc ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.td-toc ul ul {
+  padding-left: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.td-toc li {
+  margin: 0;
+}
+
+.td-toc a {
+  display: block;
+  padding: 0.25rem 0.5rem;
+  text-decoration: none;
+  color: rgba(222, 226, 230, 0.75);
+  border-radius: 0.25rem;
+  transition: all 0.1s ease;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.td-toc a:hover {
+  background-color: rgba(var(--bs-primary-rgb), 0.1);
+  color: rgb(222, 226, 230);
+}
+
+.td-toc li.active > a,
+.td-toc a.active {
+  color: rgb(222, 226, 230) !important;
+  font-weight: bold !important;
+}
+
+.td-toc li.active-path > a {
+  color: rgba(222, 226, 230, 0.9) !important;
+}
+
+/* Handle Hugo's default TOC structure - remove extra nesting for H2s */
+.td-toc nav ul li ul li a {
+  /* H2s in Hugo's default structure - treat as top level */
+  font-size: 0.875rem !important;
+  padding-left: 0.5rem !important;
+}
+
+/* Subtle indentation levels for our generated structure */
+.td-toc ul ul a {
+  font-size: 0.8125rem;
+  padding-left: 0.75rem;
+}
+
+.td-toc ul ul ul a {
+  font-size: 0.8125rem;
+  padding-left: 1rem;
+}
+
+.td-toc ul ul ul ul a {
+  font-size: 0.8125rem;
+  padding-left: 1.25rem;
+}
+
+/* Force essentials section to always stay expanded with high specificity */
+.td-sidebar-nav #m-docsessentials-li ul,
+.td-sidebar-nav #m-docsessentials-li ul.collapse,
+.td-sidebar-nav #m-docsessentials-li ul.foldable {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Ensure essentials submenu items are visible */
+.td-sidebar-nav #m-docsessentials-li ul li {
+  display: list-item !important;
+}
+
+.td-sidebar-nav #m-docsessentials-li ul li a {
+  display: block !important;
+}
+</style>
+
+<!-- Add TrueNAS header styles matching WordPress implementation -->
+<style>
+/* Reset any positioning - let TrueNAS header scroll naturally */
+.truenas-top-header {
+  position: relative;
+  z-index: 1000 !important;
+  background-color: #ffffff;
+  border-bottom: 2px solid #31beec;
+}
+
+/* Dark mode for TrueNAS top header */
+[data-bs-theme="dark"] .truenas-top-header {
+  background: linear-gradient(90deg, #002637 0%, #002637 60%, #000000 100%) !important;
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .truenas-top-header a {
+  color: #ffffff !important;
+}
+
+/* Menu buttons and links */
+[data-bs-theme="dark"] .truenas-top-header .truenas-menubutton {
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .truenas-top-header .truenas-menubutton:hover {
+  color: #31beec !important;
+}
+
+[data-bs-theme="dark"] .truenas-top-header .truenas-menuitem-link {
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .truenas-top-header .truenas-menuitem-link:hover {
+  color: #31beec !important;
+}
+
+[data-bs-theme="dark"] .truenas-top-header .truenas-menuitem-text b,
+[data-bs-theme="dark"] .truenas-top-header .truenas-menuitem-text p {
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .truenas-top-header .truenas-menuitem-link:hover .truenas-menuitem-text b,
+[data-bs-theme="dark"] .truenas-top-header .truenas-menuitem-link:hover .truenas-menuitem-text p {
+  color: #31beec !important;
+}
+
+/* Dropdown menus */
+[data-bs-theme="dark"] .truenas-top-header .truenas-menudropdown {
+  background-color: #1b1f22 !important;
+  border-color: #31beec !important;
+}
+
+[data-bs-theme="dark"] .truenas-top-header .truenas-menudropdown a {
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .truenas-top-header .truenas-menudropdown a:hover {
+  color: #31beec !important;
+  background-color: transparent !important;
+}
+
+[data-bs-theme="dark"] .truenas-top-header .truenasdownload-menudropdown {
+  background-color: #1b1f22 !important;
+  border-color: #31beec !important;
+}
+
+/* Support button and links */
+[data-bs-theme="dark"] .truenas-top-header .truenas-supportbutton {
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .truenas-top-header .truenas-supportbutton:hover {
+  color: #31beec !important;
+}
+
+/* Edition buttons - ensure proper colors in dark mode */
+[data-bs-theme="dark"] .truenas-edition-buttons .truenas-edition-button:first-child {
+  background: #71bf44 !important;
+}
+
+[data-bs-theme="dark"] .truenas-edition-buttons .truenas-edition-button:first-child:hover {
+  background: #0095d5 !important;
+}
+
+[data-bs-theme="dark"] .truenas-edition-buttons .truenas-edition-button:last-child {
+  background: #0095d5 !important;
+}
+
+[data-bs-theme="dark"] .truenas-edition-buttons .truenas-edition-button:last-child:hover {
+  background: #71bf44 !important;
+}
+
+/* Ensure the header itself has proper stacking context */
+.truenas-top-header .gdoc-header {
+  position: relative;
+  z-index: 10001;
+  background-color: transparent;
+}
+
+/* Make sure menu items create proper stacking context */
+.truenas-menuitem {
+  position: relative;
+  z-index: 10002;
+}
+
+/* Reset Docsy navbar to normal behavior */
+.td-navbar {
+  margin-top: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Reset main content */
+.td-main {
+  margin-top: 0;
+}
+
+/* Media menu should only show on smaller screens */
+.truenas-mediamenu {
+  display: none;
+}
+
+@media screen and (max-width: 800px) {
+  .truenas-mediamenu {
+    display: block;
+  }
+
+  .truenas-menubar {
+    display: none;
+  }
+}
+
+/* Ensure consistent container sizing */
+.truenas-top-header .container {
+  max-width: 100rem;
+  margin: 0 auto;
+  background: transparent;
+}
+
+/* Fix container layout */
+.truenas-top-header .container.linksrow {
+  padding: 0.25rem 1rem; /* Minimal padding top and bottom */
+}
+
+.truenas-top-header .container.truerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60px; /* Set row height to match reference site */
+}
+
+/* Ensure proper flex behavior for menubar */
+.truenas-menubar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Group wrapper for dropdown menu buttons with pill border */
+.truenas-menu-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid #31beec;
+  border-radius: 50px;
+  padding: 5px;
+}
+
+/* WordPress-style menu buttons */
+.truenas-menubutton {
+  background-color: transparent;
+  color: #2b2b2b;
+  padding: 8px 16px;
+  border: none;
+  font-family: "Inter iX", Helvetica, Arial, Lucida, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.truenas-menubutton:hover {
+  color: #31beec;
+}
+
+/* Get In Touch button - simple styling */
+.truenas-getintouch-button {
+  background-color: transparent;
+  color: #2b2b2b;
+  padding: 13px 20px;
+  border: none;
+  font-family: "Inter iX", Helvetica, Arial, Lucida, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.truenas-getintouch-button:hover {
+  color: #31beec;
+}
+
+/* Get A Quote button - primary button with green wipe animation matching homepage */
+.truenas-quote-button {
+  background: transparent;
+  border: 1px solid #0095d5;
+  color: white;
+  padding: 13px 30px;
+  border-radius: 30px;
+  margin-left: 10px;
+  font-family: "Inter iX", Helvetica, Arial, Lucida, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.truenas-quote-button::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  background: #0095d5;
+  z-index: -2;
+  border-radius: 30px;
+}
+
+.truenas-quote-button::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -10%;
+  width: 0;
+  bottom: -1px;
+  background: #71bf44;
+  transition: width 0.25s ease;
+  transform: skewX(-10deg);
+  z-index: -1;
+}
+
+.truenas-quote-button:hover::before {
+  width: 120%;
+}
+
+.truenas-quote-button:hover {
+  border-color: #71bf44 !important;
+  color: white !important;
+}
+
+/* WordPress-style dropdown menus */
+.truenas-menudropdown {
+  display: none;
+  position: absolute;
+  background-color: #ffffff;
+  width: max-content;
+  box-shadow: 0px 8px 24px 0px rgba(0,0,0,0.15);
+  z-index: 10;
+  top: 100%;
+  left: 0;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+}
+
+/* Wide dropdown for Support & Resources */
+.truenas-menudropdown-wide {
+  min-width: 700px;
+}
+
+/* Prevent dropdowns from going off-screen on the right */
+/* Right-align Support & Resources and Company dropdowns */
+.truenas-menuitem:nth-last-child(-n+3) .truenas-menudropdown {
+  left: auto;
+  right: 0;
+}
+
+/* Products dropdown - position to avoid overflow */
+.truenas-menuitem:first-child .truenas-menudropdown {
+  left: 50%;
+  transform: translateX(-50%);
+  right: auto;
+}
+
+/* On narrower screens, shift it further left */
+@media (max-width: 1200px) {
+  .truenas-menuitem:first-child .truenas-menudropdown {
+    left: auto;
+    right: 1rem;
+    transform: none;
+  }
+}
+
+/* Dropdown link styling */
+.truenas-menudropdown a {
+  font-family: "Inter iX", Helvetica, Arial, Lucida, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2b2b2b;
+  padding: 6px 10px;
+  text-decoration: none;
+  display: block;
+  transition: color 0.3s ease;
+}
+
+.truenas-menudropdown a:hover {
+  color: #31beec;
+}
+
+/* Menu item hover states */
+.truenas-menuitem:hover .truenas-menudropdown {
+  display: block;
+}
+
+.truenas-menuitem:hover .truenas-menubutton {
+  color: #31beec;
+}
+
+/* Menu item links with images and text */
+.truenas-menuitem-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  text-decoration: none !important;
+  color: #2b2b2b !important;
+  max-width: 350px !important;
+  line-height: 1.4 !important;
+  padding: 8px 10px !important;
+  font-family: "Inter iX", Helvetica, Arial, Lucida, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: color 0.3s ease !important;
+}
+
+.truenas-menuitem-link img {
+  width: 95px !important;
+  height: auto !important;
+  flex-shrink: 0 !important;
+  margin-right: 0.5rem !important;
+  vertical-align: middle !important;
+}
+
+.truenas-menuitem-link:hover {
+  color: #31beec !important;
+}
+
+/* Ensure the text within menuitem-links also changes on hover */
+.truenas-menuitem-link:hover .truenas-menuitem-text,
+.truenas-menuitem-link:hover .truenas-menuitem-text b,
+.truenas-menuitem-link:hover .truenas-menuitem-text p {
+  color: #31beec !important;
+}
+
+/* Edition buttons container - side by side, same height */
+.truenas-edition-buttons {
+  display: flex !important;
+  gap: 0 !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Edition buttons (Enterprise and Community) - button style */
+.truenas-edition-button {
+  display: flex !important;
+  flex: 1 !important;
+  align-items: flex-start !important;
+  gap: 0.75rem !important;
+  padding: 1rem !important;
+  text-decoration: none !important;
+  border-radius: 0 !important;
+  transition: background-color 0.3s ease !important;
+  font-family: "Inter iX", Helvetica, Arial, Lucida, sans-serif !important;
+  min-height: 100px !important;
+}
+
+/* Enterprise button - green default, blue hover */
+.truenas-edition-buttons .truenas-edition-button:first-child {
+  background: #71bf44 !important;
+}
+
+.truenas-edition-buttons .truenas-edition-button:first-child:hover {
+  background: #0095d5 !important;
+}
+
+/* Community button - blue default, green hover */
+.truenas-edition-buttons .truenas-edition-button:last-child {
+  background: #0095d5 !important;
+}
+
+.truenas-edition-buttons .truenas-edition-button:last-child:hover {
+  background: #71bf44 !important;
+}
+
+.truenas-edition-button img {
+  width: 80px !important;
+  height: auto !important;
+  flex-shrink: 0 !important;
+}
+
+.truenas-edition-button .edition-text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+  text-align: left !important;
+}
+
+.truenas-edition-button .edition-title {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: white !important;
+  line-height: 1.3 !important;
+}
+
+.truenas-edition-button .edition-description {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: rgba(0, 0, 0, 0.7) !important;
+  line-height: 1.4 !important;
+}
+
+/* Column headers with gradient underline */
+.truenas-column-header {
+  color: #0095d5 !important;
+  font-weight: 600 !important;
+  font-family: "Inter iX", Helvetica, Arial, Lucida, sans-serif !important;
+  margin-bottom: 0.5rem !important;
+  padding: 0 12px !important;
+  padding-top: 2rem !important;
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+  display: block !important;
+}
+
+/* Menu item columns layout */
+.truenas-menuitem-columns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.truenas-menuitem-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.truenas-sub-columns {
+  display: flex;
+  gap: 1rem;
+}
+
+.truenas-sub-column {
+  flex: 1;
+}
+
+/* Horizontal rule styling with gradient */
+.truenas-menudropdown-hr {
+  border: 0 !important;
+  height: 3px !important;
+  background: linear-gradient(90deg, #31beec 0%, #71bf44 100%) !important;
+  margin: 0.5rem 0 1rem 0 !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+/* Text styling */
+.truenas-menuitem-text b {
+  display: block;
+  font-weight: 600;
+  color: inherit;
+}
+
+.truenas-menuitem-text p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.7;
+  color: inherit;
+}
+
+/* Media menu button styling */
+.truenas-mediamenu .truenas-menubutton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 8px 12px;
+}
+
+.truenas-mediamenu .truenas-menubutton img {
+  width: 16px;
+  height: 16px;
+}
+
+/* Media menu hover states */
+.truenas-mediamenu:hover .truenas-menudropdown {
+  display: block;
+}
+
+.truenas-mediamenu:hover .truenas-menubutton {
+  background-color: black;
+  color: white;
+}
+
+/* Fix logo display */
+.truenas-top-header .gdoc-brand__link {
+  display: block !important;
+  visibility: visible !important;
+}
+
+.truenas-top-header .gdoc-brand__img {
+  display: block !important;
+  visibility: visible !important;
+  width: 276px;
+  height: auto;
+  max-width: 276px;
+  opacity: 1 !important;
+}
+
+.truenas-top-header .flex.align-center {
+  display: flex !important;
+  align-items: center !important;
+}
+</style>
+
+<!-- Inject TrueNAS header directly using Hugo template -->
+<div class="truenas-top-header">
+  {{ partial "truenas-header.html" . }}
+</div>
+
+<style>
+/* ===== TrueNAS Header Responsive Design ===== */
+
+/* Default (Desktop) Styles - No changes needed for existing layout */
+
+/* Dynamic logo sizing for all breakpoints */
+.gdoc-brand__img {
+  max-width: 184px; /* Set proportional width for 40px height */
+  height: auto;
+  width: auto;
+  max-height: 40px; /* Reduced from 60px to match reference site */
+  object-fit: contain; /* Maintain aspect ratio */
+}
+
+/* Hamburger menu - hidden by default */
+.truenas-hamburger-menu {
+  display: none;
+  position: relative;
+}
+
+.truenas-hamburger-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  margin-right: 1rem;
+}
+
+.hamburger-bar {
+  width: 100%;
+  height: 3px;
+  background-color: #31beec;
+  transition: all 0.3s ease;
+}
+
+.truenas-hamburger-menu .truenas-menudropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  border: 1px solid #e0e0e0;
+  z-index: 1000;
+  min-width: 250px;
+  padding: 0.5rem 0;
+}
+
+.truenas-hamburger-menu .truenas-menudropdown a {
+  display: block;
+  padding: 12px 16px;
+  color: #2b2b2b;
+  text-decoration: none;
+  font-family: "Inter iX", Helvetica, Arial, Lucida, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.truenas-hamburger-menu .truenas-menudropdown a:hover {
+  color: #31beec;
+  background-color: #f5f5f5;
+}
+
+/* Disabled - this was causing all menus to open on hover */
+/* .truenas-hamburger-menu:hover .truenas-menudropdown {
+  display: block !important;
+  z-index: 10000 !important;
+} */
+
+/* ===== BREAKPOINT 2: TABLET SIZE ===== */
+/* DISABLED - This breakpoint was causing unwanted layout wrapping */
+/* @media screen and (max-width: 1200px) and (min-width: 769px) {
+  .truenas-top-header .container.truerow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+} */
+
+/* ===== BREAKPOINT: MOBILE MENU AT 1180px ===== */
+@media screen and (max-width: 1180px) {
+  /* Hide desktop menu buttons group */
+  .truenas-menu-buttons-group {
+    display: none !important;
+  }
+
+  /* Show hamburger menu in menubar (stays on right side) */
+  .truenas-hamburger-menu {
+    display: block;
+  }
+
+  /* Keep logo and menubar on same line - override 1200px breakpoint */
+  .truenas-top-header .container.truerow {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  /* Mobile dropdown container - full width overlay */
+  .truenas-mobile-dropdown {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ffffff;
+    z-index: 10000;
+    overflow-y: auto;
+    padding: 20px 10px 10px;
+  }
+
+  .truenas-mobile-dropdown.active {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Mobile menu columns container */
+  .mobile-menu-columns {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .mobile-menu-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Mobile menu section */
+  .mobile-menu-section {
+    position: relative;
+  }
+
+  .mobile-menu-title {
+    display: block;
+    color: #2b2b2b;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 12px 15px;
+    border: none;
+    background: none;
+    text-align: left;
+    width: 100%;
+  }
+
+  .mobile-menu-title i {
+    float: right;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-menu-section.expanded .mobile-menu-title i {
+    transform: rotate(180deg);
+  }
+
+  /* Hide dropdowns by default */
+  .mobile-menu-section .truenas-menudropdown {
+    display: none !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1) !important;
+    padding: 1rem !important;
+    margin: 0.5rem 0 1rem 0 !important;
+    max-height: none !important;
+    z-index: 10 !important;
+  }
+
+  /* Show dropdowns only when section is expanded */
+  .mobile-menu-section.expanded .truenas-menudropdown {
+    display: block !important;
+  }
+
+  /* Close button styling - simple X Close text, sticky at bottom */
+  .mobile-menu-close {
+    margin-top: auto;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    background-color: #ffffff;
+    color: #666;
+    border: none;
+    font-size: 16px;
+    font-weight: 400;
+    cursor: pointer;
+    text-align: center;
+    font-family: "Inter iX", Helvetica, Arial, Lucida, sans-serif;
+    position: sticky;
+    bottom: 0;
+  }
+
+  .mobile-menu-close::before {
+    content: "\00d7";
+    font-size: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  .mobile-menu-close:hover {
+    color: #0095d5;
+  }
+}
+
+  /* Adjust dropdown positioning for wrapped layout */
+  .truenas-menudropdown,
+  .truenasdownload-menudropdown {
+    right: auto;
+    left: 0;
+  }
+}
+
+/* ===== BREAKPOINT 2.5: COMPACT TABLET (Emergency space-saving) ===== */
+@media screen and (max-width: 950px) and (min-width: 769px) {
+  /* Make Enterprise Support button icon-only to save space */
+  .truenas-supportbutton {
+    padding: 13px 15px 10px 15px; /* Reduce horizontal padding */
+    min-width: auto;
+  }
+  
+  /* Hide the text, keep only the icon */
+  .truenas-supportbutton {
+    font-size: 0; /* Hide text */
+  }
+  
+  .truenas-supportbutton i {
+    font-size: 16px; /* Restore icon size */
+    margin: 0; /* Remove text spacing */
+  }
+  
+  /* Add tooltip on hover to show what the button does */
+  .truenas-supportbutton::after {
+    content: "Enterprise Support";
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 1000;
+  }
+  
+  .truenas-supportbutton:hover::after {
+    opacity: 1;
+  }
+  
+  /* Ensure the menuitem has relative positioning for tooltip */
+  .truenas-menuitem:last-child {
+    position: relative;
+  }
+}
+
+/* ===== BREAKPOINT 3: TABLET/MOBILE (768px) ===== */
+@media screen and (max-width: 768px) {
+  /* Hide Get A Quote button */
+  .truenas-quote-button {
+    display: none !important;
+  }
+
+  /* Keep hamburger on right side */
+  .truenas-hamburger-menu {
+    display: block;
+  }
+
+  /* Keep header layout: logo left, hamburger right */
+  .truenas-top-header .container.truerow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Responsive logo sizing */
+  .gdoc-brand__img {
+    max-width: 160px !important; /* Proportional to 35px height */
+    width: auto !important;
+    height: auto !important;
+    max-height: 35px !important; /* Reduced from 50px */
+    object-fit: contain !important;
+  }
+
+  /* Constrain mobile dropdown to viewport */
+  .truenas-mobile-dropdown {
+    padding: 15px 10px 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-menu-columns {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Constrain dropdown menus to viewport width - stretch across full width */
+  .mobile-menu-section .truenas-menudropdown {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Anchor right column menus to the right */
+  .mobile-menu-column:last-child .mobile-menu-section .truenas-menudropdown {
+    left: auto !important;
+    right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 10px !important;
+  }
+
+  .mobile-menu-section .truenas-menudropdown a,
+  .mobile-menu-section .truenas-menudropdown .truenas-menuitem-link {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Allow text wrapping in menu items */
+  .truenas-menuitem-text b,
+  .truenas-menuitem-text p {
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Constrain columns */
+  .truenas-menuitem-columns {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .truenas-menuitem-column {
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Constrain images in dropdowns */
+  .mobile-menu-section .truenas-menudropdown img {
+    max-width: 60px !important;
+  }
+}
+
+/* ===== BREAKPOINT 4: SMALL MOBILE (480px) ===== */
+@media screen and (max-width: 480px) {
+  /* Single column layout for mobile menu */
+  .mobile-menu-columns {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  .mobile-menu-column {
+    width: 100% !important;
+  }
+
+  /* Reset positioning - center all menus in single column */
+  .mobile-menu-section .truenas-menudropdown,
+  .mobile-menu-column:last-child .mobile-menu-section .truenas-menudropdown {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Single column dropdowns */
+  .mobile-menu-section .truenas-menudropdown .truenas-menuitem-columns {
+    flex-direction: column !important;
+  }
+
+  .mobile-menu-section .truenas-menudropdown .truenas-menuitem-column {
+    width: 100% !important;
+  }
+
+  /* Smaller logo on very small screens */
+  .gdoc-brand__img {
+    max-width: 138px !important; /* Proportional to 30px height */
+    width: auto !important;
+    height: auto !important;
+    max-height: 30px !important; /* Reduced from 40px */
+    object-fit: contain !important;
+  }
+
+  /* Reduce padding on mobile dropdown */
+  .truenas-mobile-dropdown {
+    padding: 15px 5px 5px !important;
+  }
+
+  /* Compact mobile menu titles */
+  .mobile-menu-title {
+    font-size: 16px !important;
+    padding: 10px 12px !important;
+  }
+
+  /* Edition buttons single column */
+  .truenas-edition-buttons {
+    flex-direction: column !important;
+  }
+}
+
+/* ===== ADDITIONAL RESPONSIVE ADJUSTMENTS ===== */
+@media screen and (max-width: 480px) {
+  /* Extra small mobile adjustments */
+  .gdoc-brand__img {
+    max-width: 150px;
+  }
+  
+  .truenas-hamburger-menu .truenas-menudropdown {
+    min-width: 220px;
+    max-width: calc(100vw - 2rem);
+  }
+  
+  .truenas-top-header .container.truerow {
+    padding-left: 2.5rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Smooth transitions for all responsive changes */
+.gdoc-brand__img,
+.truenas-menubar,
+.truenas-hamburger-menu {
+  transition: all 0.3s ease;
+}
+
+/* ===== DOCS HUB DROPDOWN STYLING ===== */
+
+/* Navbar docs hub container - now positioned in menu */
+.navbar-docs-hub {
+  /* Remove margins since it's now part of the menu flow */
+}
+
+/* Docs hub now uses standard nav-link styling - removed custom overrides */
+
+/* Docs hub wordmark image */
+.docs-hub-wordmark {
+  height: 18px;
+  width: auto;
+  max-width: 140px;
+  filter: brightness(1);
+  vertical-align: middle;
+  display: inline-block;
+  margin-top: 3px;
+}
+
+/* Docs hub now uses standard Bootstrap caret (::after element) */
+
+/* Docs hub dropdown now uses standard Bootstrap dropdown styling */
+
+/* Icon styling removed */
+
+/* Mobile responsive behavior - adjust image size for smaller screens */
+@media (max-width: 991.98px) {
+  .docs-hub-wordmark {
+    height: 14px; /* Smaller on mobile */
+    max-width: 120px;
+  }
+  
+  .docs-hub-trigger {
+    padding: 0.375rem 0.5rem !important; /* Tighter padding on mobile */
+  }
+}
+
+/* ===== FIX MOBILE DROPDOWN OVERFLOW ISSUES ===== */
+
+/* Fix navbar dropdown overflow at all viewport sizes */
+/* Force all potential clipping containers to be visible */
+.navbar-collapse,
+.td-navbar-nav-scroll,
+#main_navbar,
+.container-fluid,
+.td-navbar,
+.navbar,
+.navbar > .container-fluid {
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  max-height: none !important;
+}
+
+/* Force dropdown visibility on non-homepage pages */
+body:not(.td-home) .td-navbar,
+body:not(.td-home) .td-navbar-nav-scroll,
+body:not(.td-home) #main_navbar,
+body:not(.td-home) .navbar-nav,
+body:not(.td-home) .nav-item.dropdown {
+  overflow: visible !important;
+  max-height: none !important;
+  contain: none !important;
+}
+
+/* Homepage specific: force navbar wrapper to allow overflow */
+.td-home .td-navbar,
+.td-home .navbar,
+.td-home .js-navbar-scroll,
+.td-home #main_navbar,
+.td-home .td-navbar.navbar-visible,
+.td-home .td-navbar.navbar-toggled,
+.td-home .navbar-scrolled,
+.td-home .td-navbar > *,
+.td-home .navbar > *,
+.td-home .td-navbar .container-fluid,
+.td-home .td-navbar .navbar-collapse,
+.td-home .td-navbar .td-navbar-nav-scroll {
+  overflow: visible !important;
+  max-height: none !important;
+  clip-path: none !important;
+  contain: none !important;
+}
+
+/* Force homepage navbar dropdowns to escape containers */
+.td-home .navbar-nav,
+.td-home .nav-item.dropdown,
+.td-home .td-navbar .navbar-nav,
+.td-home .td-navbar .nav-item.dropdown {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* Force dropdown parent containers to allow overflow */
+.navbar-nav,
+.nav-item.dropdown {
+  overflow: visible !important;
+}
+
+/* Target all navbar dropdowns - essentials, color mode, etc */
+.td-navbar .dropdown-menu,
+.td-navbar .dropdown-menu.show,
+.nav-item.dropdown .dropdown-menu,
+.nav-item.dropdown .dropdown-menu.show {
+  position: absolute !important;
+  top: 100% !important;
+  left: auto !important;
+  right: 0 !important;
+  bottom: auto !important;
+  z-index: 999999 !important;
+  transform: none !important;
+  margin-top: 0.5rem !important;
+  max-height: none !important;
+  overflow-y: visible !important;
+  overflow-x: visible !important;
+  width: auto !important;
+  min-width: 200px !important;
+  border-radius: 0.375rem !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3) !important;
+  background-color: var(--bs-dark) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 991.98px) {
+  body,
+  html {
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+  }
+}
+  
+  /* Fix dropdown item colors to match other navbar dropdowns */
+  .nav-item.dropdown .dropdown-menu .dropdown-item {
+    color: rgba(255, 255, 255, 1) !important; /* Full white, not gray */
+    opacity: 1 !important;
+  }
+  
+  .nav-item.dropdown .dropdown-menu .dropdown-item:hover,
+  .nav-item.dropdown .dropdown-menu .dropdown-item:focus {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    opacity: 1 !important;
+  }
+  
+  /* Position dropdown just below the navbar */
+  .td-navbar + * .dropdown-menu.show,
+  .nav-item.dropdown .dropdown-menu.show {
+    top: calc(100% + 0.5rem) !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: auto !important;
+    width: max-content !important;
+    min-width: 200px !important;
+  }
+  
+  /* Ensure the dropdown is visible and not clipped */
+  .navbar-nav .dropdown-menu.show {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    clip: none !important;
+    -webkit-clip-path: none !important;
+    clip-path: none !important;
+  }
+  
+  /* Override any Popper.js inline styles that might interfere */
+  .dropdown-menu[data-popper-placement] {
+    transform: none !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: 0 !important;
+    position: absolute !important;
+  }
+  
+  /* Make sure navbar items can show dropdowns */
+  .navbar-nav .nav-item {
+    position: relative !important;
+    overflow: visible !important;
+  }
+  
+  /* Fix Bootstrap dropdown caret */
+  .navbar-nav .dropdown-toggle::after {
+    display: inline-block !important;
+  }
+  
+  /* Prevent menu item overlap at very narrow widths */
+  .navbar-nav {
+    flex-wrap: nowrap !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    white-space: nowrap !important;
+  }
+  
+  .navbar-nav .nav-item {
+    flex-shrink: 0 !important;
+    min-width: fit-content !important;
+  }
+  
+  .navbar-nav .nav-link {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* ===== FIX DUAL HEADER BEHAVIOR ===== */
+
+/* TrueNAS header should scroll off screen */
+.truenas-top-header {
+  position: relative;
+  z-index: 1020; /* Below Docsy navbar when sticky */
+}
+
+/* TARGETED FIX: Force TrueNAS dropdowns above Docsy navbar */
+.truenas-menudropdown,
+.truenasdownload-menudropdown,
+.truenas-hamburger-menu .truenas-menudropdown {
+  z-index: 9999 !important; /* High but reasonable z-index */
+  position: absolute !important; /* Keep absolute positioning */
+  pointer-events: auto !important;
+  display: none !important;
+}
+
+/* Create new stacking context for TrueNAS header */
+.truenas-top-header {
+  position: relative !important;
+  z-index: 2000 !important; /* Higher than any other element */
+}
+
+/* Ensure menuitem has proper stacking context within header */
+.truenas-menuitem {
+  position: relative !important;
+  z-index: auto !important;
+}
+
+/* Force display states */
+.truenas-menuitem:hover .truenas-menudropdown,
+.truenas-menuitem.force-show .truenas-menudropdown {
+  display: block !important;
+  z-index: 9999 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.truenas-menuitem:hover .truenasdownload-menudropdown,
+.truenas-menuitem.force-show .truenasdownload-menudropdown {
+  display: block !important;
+  z-index: 9999 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Keep Docsy navbar z-index lower than TrueNAS header */
+.td-navbar,
+nav.td-navbar,
+.js-navbar-scroll {
+  z-index: 1030 !important; /* Lower than TrueNAS header */
+}
+
+/* Enhanced hover areas for better UX */
+.truenas-menuitem .truenas-menudropdown,
+.truenas-menuitem .truenasdownload-menudropdown {
+  margin-top: -5px !important; /* Small overlap for hover bridge */
+  padding-top: 5px !important; /* Maintain visual spacing */
+}
+
+/* Force Docsy navbar to be sticky with higher specificity */
+header .td-navbar,
+.td-navbar.js-navbar-scroll,
+nav.td-navbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1030 !important;
+}
+
+/* Additional backup - target by data attribute if it exists */
+[data-bs-theme="dark"].td-navbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1030 !important;
+}
+
+/* Target the class we add via JavaScript */
+.docsy-navbar-sticky {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1030 !important;
+}
+
+</style>
+
+<!-- Mobile Menu JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const hamburgerButton = document.querySelector('.truenas-hamburger-button');
+  const mobileDropdown = document.querySelector('.truenas-mobile-dropdown');
+  const closeButton = document.querySelector('.mobile-menu-close');
+
+  // Clone desktop dropdowns into mobile sections
+  const menuMapping = {
+    'products': 'desktop-products',
+    'solutions': 'desktop-solutions',
+    'support': 'desktop-support',
+    'company': 'desktop-company'
+  };
+
+  Object.keys(menuMapping).forEach(function(mobileId) {
+    const mobileSection = document.querySelector('.mobile-menu-section[data-menu="' + mobileId + '"]');
+    const desktopItem = document.getElementById(menuMapping[mobileId]);
+
+    if (mobileSection && desktopItem) {
+      const desktopDropdown = desktopItem.querySelector('.truenas-menudropdown');
+      if (desktopDropdown) {
+        const clonedDropdown = desktopDropdown.cloneNode(true);
+        mobileSection.appendChild(clonedDropdown);
+      }
+    }
+  });
+
+  if (hamburgerButton && mobileDropdown) {
+    // Open mobile menu
+    hamburgerButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      mobileDropdown.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent body scroll
+    });
+
+    // Close mobile menu
+    if (closeButton) {
+      closeButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        mobileDropdown.classList.remove('active');
+        document.body.style.overflow = '';
+        // Collapse all sections
+        document.querySelectorAll('.mobile-menu-section').forEach(function(section) {
+          section.classList.remove('expanded');
+        });
+      });
+    }
+
+    // Toggle sections on click
+    const mobileSections = document.querySelectorAll('.mobile-menu-section');
+    mobileSections.forEach(function(section) {
+      const title = section.querySelector('.mobile-menu-title');
+      if (title) {
+        title.addEventListener('click', function(e) {
+          e.stopPropagation();
+          section.classList.toggle('expanded');
+        });
+      }
+    });
+  }
+});
+</script>
+
+<!-- Debug and Force Sticky Behavior -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const isHomePage = document.body.classList.contains('td-home');
+
+  // Find the Docsy navbar
+  const navbar = document.querySelector('.td-navbar') ||
+                 document.querySelector('nav.td-navbar') ||
+                 document.querySelector('.js-navbar-scroll') ||
+                 document.querySelector('[data-bs-theme="dark"]');
+
+  // Add scroll detection for pill transformation
+  if (navbar) {
+    const truenasHeader = document.querySelector('.truenas-top-header');
+    const truenasHeaderHeight = truenasHeader ? truenasHeader.offsetHeight : 120;
+
+    function handleNavbarScroll() {
+      const scrollY = window.scrollY;
+      const isToggled = navbar.classList.contains('navbar-toggled');
+
+      // Determine if we're in scrolled zone
+      if (scrollY > truenasHeaderHeight) {
+        navbar.classList.add('navbar-scrolled');
+
+        // Clear any inline styles that might interfere with pill centering
+        navbar.style.removeProperty('left');
+        navbar.style.removeProperty('right');
+        navbar.style.removeProperty('width');
+        navbar.style.removeProperty('position');
+        navbar.style.removeProperty('top');
+        navbar.style.removeProperty('transform');
+      } else {
+        navbar.classList.remove('navbar-scrolled');
+      }
+
+      // On homepage, visibility is controlled by toggle only
+      if (isHomePage) {
+        if (isToggled) {
+          navbar.classList.add('navbar-visible');
+        } else {
+          navbar.classList.remove('navbar-visible');
+        }
+      }
+    }
+
+    // Initial check
+    handleNavbarScroll();
+
+    // Listen to scroll events
+    window.addEventListener('scroll', handleNavbarScroll, { passive: true });
+  }
+
+  // Skip the rest of the sticky positioning logic on home page
+  if (isHomePage) {
+    return;
+  }
+  
+  if (navbar) {
+    // Debug parent containers that might break sticky
+    let parent = navbar.parentElement;
+    let level = 1;
+    while (parent && level <= 5) {
+      const computedStyle = window.getComputedStyle(parent);
+      
+      // Fix common sticky-breaking properties
+      if (computedStyle.overflow === 'hidden' || 
+          computedStyle.overflowX === 'hidden' || 
+          computedStyle.overflowY === 'hidden') {
+        // Try to fix it
+        parent.style.overflow = 'visible';
+        parent.style.overflowX = 'visible';
+        parent.style.overflowY = 'visible';
+      }
+      
+      parent = parent.parentElement;
+      level++;
+    }
+    
+    // Force sticky positioning with highest priority
+    navbar.style.setProperty('position', 'sticky', 'important');
+    navbar.style.setProperty('top', '0', 'important');
+    navbar.style.setProperty('z-index', '1030', 'important');
+    
+    // Add a class for easier targeting
+    navbar.classList.add('docsy-navbar-sticky');
+    
+    // Test if sticky is actually working
+    setTimeout(() => {
+      const rect = navbar.getBoundingClientRect();
+      
+      // More aggressive test - force position fixed as fallback
+      if (rect.top !== 0) {
+        // Get TrueNAS header height to know when to make navbar fixed
+        const truenasHeader = document.querySelector('.truenas-top-header');
+        const truenasHeaderHeight = truenasHeader ? truenasHeader.offsetHeight : 120;
+        
+        // Function to toggle fixed positioning based on scroll
+        function handleFixedNavbar() {
+          // Skip if navbar-scrolled class is active (pill mode)
+          if (navbar.classList.contains('navbar-scrolled')) {
+            return;
+          }
+
+          const scrollY = window.scrollY;
+
+          if (scrollY >= truenasHeaderHeight) {
+            // Get the main container width to match
+            const mainContainer = document.querySelector('.td-outer') || document.querySelector('.container-fluid') || document.body;
+            const containerRect = mainContainer.getBoundingClientRect();
+
+            // Past TrueNAS header - make navbar fixed but constrained to container
+            navbar.style.setProperty('position', 'fixed', 'important');
+            navbar.style.setProperty('top', '0', 'important');
+            navbar.style.setProperty('left', containerRect.left + 'px', 'important');
+            navbar.style.setProperty('width', containerRect.width + 'px', 'important');
+            navbar.style.setProperty('z-index', '1030', 'important');
+            navbar.style.removeProperty('right');
+          } else {
+            // Still within TrueNAS header area - use relative positioning
+            navbar.style.setProperty('position', 'relative', 'important');
+            navbar.style.removeProperty('top');
+            navbar.style.removeProperty('left');
+            navbar.style.removeProperty('width');
+          }
+        }
+        
+        // Apply immediately
+        handleFixedNavbar();
+        
+        // Listen to scroll events
+        window.addEventListener('scroll', handleFixedNavbar, { passive: true });
+        
+        
+        // Fix tooltip positioning to prevent horizontal overflow
+        const style = document.createElement('style');
+        style.textContent = `
+          .custom-tooltip {
+            position: absolute !important;
+            max-width: 450px !important;
+            width: auto !important;
+            min-width: 200px !important;
+            word-wrap: break-word !important;
+            white-space: normal !important;
+            overflow-wrap: break-word !important;
+            right: auto !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 9999 !important;
+            line-height: 1.4 !important;
+          }
+          
+          /* Prevent tooltip from extending beyond viewport */
+          .feature-card:hover .custom-tooltip {
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+          }
+          
+          /* If tooltip would extend past right edge, align it to the right */
+          .feature-card:last-child .custom-tooltip,
+          .col:last-child .custom-tooltip {
+            left: auto !important;
+            right: 0 !important;
+            transform: none !important;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }, 1000);
+    
+  }
+  
+  // Fix TrueNAS dropdowns z-index and positioning
+  function forceDropdownZIndex() {
+    const dropdowns = document.querySelectorAll('.truenas-menudropdown, .truenasdownload-menudropdown');
+    dropdowns.forEach(dropdown => {
+      dropdown.style.setProperty('z-index', '9999', 'important');
+      dropdown.style.setProperty('position', 'absolute', 'important');
+      dropdown.style.setProperty('pointer-events', 'auto', 'important');
+    });
+    
+    // Ensure TrueNAS header has high stacking context
+    const truenasHeader = document.querySelector('.truenas-top-header');
+    if (truenasHeader) {
+      truenasHeader.style.setProperty('z-index', '2000', 'important');
+      truenasHeader.style.setProperty('position', 'relative', 'important');
+    }
+  }
+  
+  // Apply immediately
+  forceDropdownZIndex();
+  setTimeout(forceDropdownZIndex, 100);
+  
+  // Enhanced dropdown hover behavior with proper positioning
+  const menuItems = document.querySelectorAll('.truenas-menuitem');
+  
+  menuItems.forEach(item => {
+    const dropdown = item.querySelector('.truenas-menudropdown, .truenasdownload-menudropdown');
+    
+    if (dropdown) {
+      let hoverTimeout;
+      
+      function showDropdown() {
+        clearTimeout(hoverTimeout);
+        item.classList.add('force-show');
+        dropdown.style.setProperty('display', 'block', 'important');
+        dropdown.style.setProperty('z-index', '9999', 'important');
+        dropdown.style.setProperty('position', 'absolute', 'important');
+        dropdown.style.setProperty('visibility', 'visible', 'important');
+        dropdown.style.setProperty('opacity', '1', 'important');
+      }
+      
+      function hideDropdown() {
+        item.classList.remove('force-show');
+        dropdown.style.setProperty('display', 'none', 'important');
+      }
+      
+      // Show on button hover
+      item.addEventListener('mouseenter', showDropdown);
+      
+      // Keep visible when in dropdown area
+      dropdown.addEventListener('mouseenter', showDropdown);
+      
+      // Hide when leaving button with delay
+      item.addEventListener('mouseleave', () => {
+        hoverTimeout = setTimeout(() => {
+          if (!dropdown.matches(':hover')) {
+            hideDropdown();
+          }
+        }, 50);
+      });
+      
+      // Hide when leaving dropdown
+      dropdown.addEventListener('mouseleave', () => {
+        hoverTimeout = setTimeout(() => {
+          hideDropdown();
+        }, 50);
+      });
+    }
+  });
+  
+  
+  // Fix mobile dropdown positioning issues
+  function fixMobileDropdowns() {
+    if (window.innerWidth <= 991) {
+      // Find all dropdown toggles
+      const dropdownToggles = document.querySelectorAll('.navbar-nav .dropdown-toggle');
+      
+      dropdownToggles.forEach(toggle => {
+        const dropdownMenu = toggle.nextElementSibling;
+        if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+          
+          // Add click handler to force proper positioning
+          toggle.addEventListener('click', function(e) {
+            setTimeout(() => {
+              // Override any Popper.js positioning
+              if (dropdownMenu.classList.contains('show')) {
+                // Force positioning
+                dropdownMenu.style.setProperty('position', 'absolute', 'important');
+                dropdownMenu.style.setProperty('top', '100%', 'important');
+                dropdownMenu.style.setProperty('left', '0', 'important');
+                dropdownMenu.style.setProperty('right', 'auto', 'important');
+                dropdownMenu.style.setProperty('transform', 'none', 'important');
+                dropdownMenu.style.setProperty('z-index', '99999', 'important');
+                dropdownMenu.style.setProperty('max-height', 'none', 'important');
+                dropdownMenu.style.setProperty('overflow', 'visible', 'important');
+                dropdownMenu.style.setProperty('clip', 'none', 'important');
+                dropdownMenu.style.setProperty('clip-path', 'none', 'important');
+                
+                // Also fix parent containers
+                let parent = dropdownMenu.parentElement;
+                let depth = 0;
+                while (parent && depth < 10) {
+                  parent.style.setProperty('overflow', 'visible', 'important');
+                  parent.style.setProperty('overflow-x', 'visible', 'important');
+                  parent.style.setProperty('overflow-y', 'visible', 'important');
+                  parent = parent.parentElement;
+                  depth++;
+                }
+              }
+            }, 50);
+          });
+        }
+      });
+    }
+  }
+  
+  // Apply mobile dropdown fixes
+  fixMobileDropdowns();
+  
+  // Re-apply fixes on window resize
+  window.addEventListener('resize', () => {
+    setTimeout(fixMobileDropdowns, 100);
+  });
+});
+</script>
+
+<!-- Force dark background on pages with cover images -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // If page has cover image, force dark background but preserve navbar scroll behavior
+  if (document.querySelector('.blocks-cover, .td-cover-block')) {
+    document.body.classList.add('cover-page');
+    document.documentElement.classList.add('cover-page');
+    
+    // Only force page background, don't interfere with navbar
+    document.body.style.setProperty('background-color', '#282828', 'important');
+    document.body.style.setProperty('color', 'white', 'important');
+    
+    // Override Bootstrap CSS custom properties for page background only
+    document.documentElement.style.setProperty('--bs-body-bg', '#282828', 'important');
+    document.documentElement.style.setProperty('--bs-body-color', '#ffffff', 'important');
+  }
+  
+  // Add navbar toggle for home page only
+  if (document.body && document.body.classList && document.body.classList.contains('td-home')) {
+    // Create toggle button immediately
+    var toggleBtn = document.createElement('button');
+    toggleBtn.className = 'navbar-toggle-btn';
+    toggleBtn.innerHTML = '<span id="toggleText">☰</span>';
+    toggleBtn.title = 'Toggle Navigation';
+    
+    // Set initial styles without top position
+    toggleBtn.style.position = 'fixed';
+    toggleBtn.style.right = '20px';
+    toggleBtn.style.background = 'rgba(40, 40, 40, 0.9)';
+    toggleBtn.style.color = 'white';
+    toggleBtn.style.border = 'none';
+    toggleBtn.style.padding = '10px 14px';
+    toggleBtn.style.borderRadius = '8px';
+    toggleBtn.style.fontSize = '16px';
+    toggleBtn.style.cursor = 'pointer';
+    toggleBtn.style.zIndex = '1600';
+    toggleBtn.style.transition = 'all 0.3s ease';
+    toggleBtn.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)';
+    
+    // Function to set responsive positioning
+    function setResponsivePosition() {
+      var windowWidth = window.innerWidth;
+      var topPosition;
+      
+      if (windowWidth <= 768) {
+        topPosition = '120px'; // Mobile
+        toggleBtn.style.right = '10px'; // Closer to edge on mobile
+      } else if (windowWidth <= 1200) {
+        topPosition = '210px'; // Tablet - below 187px TrueNAS header
+        toggleBtn.style.right = '20px'; // Normal position
+      } else {
+        topPosition = '130px'; // Desktop
+        toggleBtn.style.right = '20px'; // Normal position
+      }
+      
+      toggleBtn.style.top = topPosition;
+    }
+    
+    // Add button to page first
+    document.body.appendChild(toggleBtn);
+    
+    // Set initial position immediately
+    setResponsivePosition();
+    
+    // Update position on window resize
+    window.addEventListener('resize', setResponsivePosition);
+    
+    toggleBtn.addEventListener('click', function() {
+      // Find navbar when clicked
+      var navbar = document.querySelector('.td-navbar') || 
+                   document.querySelector('nav.td-navbar') || 
+                   document.querySelector('.navbar') ||
+                   document.querySelector('nav[data-bs-theme="dark"]');
+      
+      var toggleText = document.getElementById('toggleText');
+      
+      if (navbar) {
+        if (navbar.classList.contains('navbar-toggled')) {
+          // Toggle OFF - hide navbar
+          navbar.classList.remove('navbar-visible');
+          navbar.classList.remove('navbar-toggled');
+          if (toggleText) toggleText.innerHTML = '☰';
+          // Reset button position when navbar is hidden
+          setResponsivePosition();
+        } else {
+          // Toggle ON - show navbar (pill if scrolled, full-width if at top)
+          navbar.classList.add('navbar-visible');
+          navbar.classList.add('navbar-toggled');
+          if (toggleText) toggleText.innerHTML = '✕';
+          // Move button below navbar when it's visible
+          var windowWidth = window.innerWidth;
+          var navbarHeight = navbar.offsetHeight || 56; // Default navbar height
+          var currentTop = parseInt(toggleBtn.style.top);
+          toggleBtn.style.top = (currentTop + navbarHeight + 5) + 'px';
+        }
+      }
+    });
+  }
+});
+</script>
+
+<!-- Icon Libraries -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+
+<!-- Pagefind Search Integration -->
+<!-- Disabled: Using simple search interface instead -->
+<!-- <script defer src="/js/pagefind-search.js"></script> -->
+
+<!-- DocsBot integration -->
+<script type="text/javascript">window.DocsBotAI=window.DocsBotAI||{},DocsBotAI.init=function(e){return new Promise((t,r)=>{var n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src="https://widget.docsbot.ai/chat.js";let o=document.getElementsByTagName("script")[0];o.parentNode.insertBefore(n,o),n.addEventListener("load",()=>{let n;Promise.all([new Promise((t,r)=>{window.DocsBotAI.mount(Object.assign({}, e)).then(t).catch(r)}),(n=function e(t){return new Promise(e=>{if(document.querySelector(t))return e(document.querySelector(t));let r=new MutationObserver(n=>{if(document.querySelector(t))return e(document.querySelector(t)),r.disconnect()});r.observe(document.body,{childList:!0,subtree:!0})})})("#docsbotai-root"),]).then(()=>t()).catch(r)}),n.addEventListener("error",e=>{r(e.message)})})};</script>
+<script type="text/javascript">
+  DocsBotAI.init({
+    id: "c6l7vGyugnoP9SSSoNXy/h6qDF4J2h3xfHKO9Nm6r",
+    options: {
+      customCSS: `
+        .floating-button {
+          position: fixed !important;
+          bottom: 20px !important;
+          right: 20px !important;
+          background: #0095d5 !important;
+          border-radius: 30px !important;
+          padding: 12px 24px !important;
+          border: none !important;
+          overflow: hidden !important;
+          z-index: 9999 !important;
+          transition: all 0.3s ease !important;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+          width: auto !important;
+          max-width: none !important;
+        }
+        .floating-button::before {
+          content: '' !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: -10% !important;
+          width: 0 !important;
+          bottom: 0 !important;
+          background: #71bf44 !important;
+          transition: width 0.25s ease !important;
+          transform: skewX(-10deg) !important;
+          z-index: -1 !important;
+        }
+        .floating-button:hover::before {
+          width: 120% !important;
+        }
+      `
+    }
+  });
+</script>
+
+<!-- Add Jira Issue Collector feedback solution -->
+<script type="text/javascript" src="https://ixsystems.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/1jmxwi/b/8/c95134bc67d3a521bb3f4331beb9b804/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=b430af64"></script>
+
+<!-- Custom styling for Jira feedback collector -->
+<style>
+/* Feedback button customization */
+#atlwdg-trigger.atlwdg-trigger {
+  /* Position 3/4 down the right side */
+  top: 75% !important;
+
+  /* Use primary color for background */
+  background-color: var(--bs-primary) !important;
+
+  /* Remove border */
+  border: none !important;
+
+  /* Text */
+  font-size: 14px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+  font-weight: 600 !important;
+  padding-left: 1em !important;
+  padding-right: 1em !important;
+
+  /* High z-index to stay above footer */
+  z-index: 9999 !important;
+
+  /* Add smooth transition for pull effect and color change */
+  transition: padding-top 0.3s ease, background-color 0.25s ease !important;
+}
+
+/* Hover effect - "pull tab" animation toward center + green background */
+#atlwdg-trigger.atlwdg-trigger:hover {
+  /* Extend the button toward center */
+  padding-top: 25px !important;
+
+  /* Smooth transition to green */
+  background-color: #71bf44 !important;
+}
+
+/* Remove ALL shadows from both light and dark modes */
+.td-cover-block .td-overlay__inner *,
+.td-cover-block .td-overlay__inner p.lead,
+.td-cover-block .td-overlay__inner .btn-primary,
+.td-cover-block .td-overlay__inner .btn-secondary,
+.td-cover-block .td-overlay__inner .btn-link,
+.td-cover-block .td-overlay__inner img,
+#atlwdg-trigger.atlwdg-trigger,
+#atlwdg-trigger.atlwdg-trigger:hover {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+</style>
+
+

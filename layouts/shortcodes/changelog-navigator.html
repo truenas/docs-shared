@@ -1,0 +1,344 @@
+{{/* Fully automated discovery - no manual updates needed */}}
+{{ $changelogs := slice }}
+
+{{/* Generate years dynamically - current year plus 2 years back and 2 years forward */}}
+{{ $currentYear := now.Year }}
+{{ $years := slice }}
+{{ range seq (sub $currentYear 2) (add $currentYear 2) }}
+  {{ $years = $years | append (string .) }}
+{{ end }}
+
+{{ $months := slice "january" "february" "march" "april" "may" "june" "july" "august" "september" "october" "november" "december" }}
+
+{{ range $years }}
+  {{ $year := . }}
+  {{ range $months }}
+    {{ $month := . }}
+    {{ $filename := printf "%s-%s" $month $year }}
+    {{ $filepath := printf "/static/includes/changes/%s.md" $filename }}
+    {{ if fileExists $filepath }}
+      {{ $title := printf "%s %s" (title $month) $year }}
+      {{ $id := $filename }}
+      
+      {{/* Create a sortable date key (YYYY-MM format) */}}
+      {{ $monthMap := dict "january" "01" "february" "02" "march" "03" "april" "04" "may" "05" "june" "06" "july" "07" "august" "08" "september" "09" "october" "10" "november" "11" "december" "12" }}
+      {{ $monthNum := index $monthMap (lower $month) }}
+      {{ $sortKey := printf "%s-%s" $year $monthNum }}
+      
+      {{ $changelogs = $changelogs | append (dict "id" $id "title" $title "file" $filepath "sortKey" $sortKey) }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{/* Sort chronologically with newest first */}}
+{{ $changelogs = sort $changelogs "sortKey" "desc" }}
+
+<div class="changelog-navigator">
+  <div class="d-flex justify-content-end align-items-center mb-4">
+    <div class="dropdown">
+      <button class="btn btn-outline-primary dropdown-toggle" type="button" id="changelogDropdown" data-bs-toggle="dropdown" data-bs-display="static">
+        <iconify-icon icon="mdi:calendar-month" class="me-1"></iconify-icon>
+        <span id="selectedPeriod">{{ (index $changelogs 0).title }}</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        {{- range $changelogs -}}
+        <li>
+          <a class="dropdown-item changelog-link" href="#" data-target="changelog-{{ .id }}" data-title="{{ .title }}">
+            <iconify-icon icon="mdi:calendar" class="me-2"></iconify-icon>
+            {{ .title }}
+          </a>
+        </li>
+        {{- end -}}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Content sections -->
+  <div class="changelog-content">
+    {{- range $index, $changelog := $changelogs -}}
+    <div class="changelog-section {{ if eq $index 0 }}active{{ else }}d-none{{ end }}" id="changelog-{{ .id }}">
+      <div class="card">
+        <div class="card-header text-white">
+          <h4 class="mb-0">
+            <iconify-icon icon="mdi:new-box" class="me-2"></iconify-icon>
+            {{ .title }}
+          </h4>
+        </div>
+        <div class="card-body">
+          {{- if .page -}}
+            {{- .page.Content -}}
+          {{- else if .file -}}
+            {{- readFile .file | markdownify -}}
+          {{- else -}}
+            <p>Content for {{ .title }} coming soon...</p>
+          {{- end -}}
+        </div>
+      </div>
+    </div>
+    {{- end -}}
+  </div>
+</div>
+
+<style>
+.changelog-navigator .changelog-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--bs-border-color);
+}
+
+.changelog-navigator .changelog-card:hover {
+  border-color: var(--bs-primary);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.changelog-navigator .changelog-section {
+  margin-bottom: 2rem;
+}
+
+.changelog-navigator .card {
+  border-radius: 12px;
+  border: none;
+  position: relative;
+  background: linear-gradient(94.09deg, #198AC8 7.37%, #71BF44 103.99%);
+  padding: 2px;
+  overflow: hidden;
+  box-shadow: 0px 3px 14.1px 0px #0000001A;
+}
+
+.changelog-navigator .card::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 10px;
+  background: #1E1E1E;
+  z-index: 0;
+}
+
+.changelog-navigator .card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.changelog-navigator .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(94.09deg, #198AC8 7.37%, #71BF44 103.99%) !important;
+  margin: -2px -2px 0 -2px;
+  padding: calc(1rem + 2px) calc(1.25rem + 2px) 1rem 1.25rem;
+}
+
+.changelog-navigator .card-body {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.changelog-navigator .card-header h4 {
+  margin-bottom: 0;
+  flex-grow: 1;
+}
+
+/* Dropdown button styling with gradient border */
+.changelog-navigator .dropdown {
+  position: relative;
+}
+
+.changelog-navigator .dropdown button.btn {
+  width: 205px;
+  height: 48px;
+  border-radius: 30px;
+  padding: 12px 24px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(94.09deg, #198AC8 7.37%, #71BF44 103.99%);
+  overflow: visible;
+  gap: 10px;
+}
+
+.changelog-navigator .dropdown button.btn::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 28px;
+  background: #282828;
+  z-index: 0;
+}
+
+.changelog-navigator .dropdown button.btn iconify-icon,
+.changelog-navigator .dropdown button.btn span {
+  position: relative;
+  z-index: 1;
+}
+
+.changelog-navigator .dropdown button.btn::after {
+  position: relative;
+  z-index: 1;
+  margin-left: 0.5em;
+}
+
+/* Light mode button styles */
+.changelog-navigator .dropdown button.btn::before {
+  background: #ffffff;
+}
+
+.changelog-navigator .dropdown button.btn:hover::before,
+.changelog-navigator .dropdown button.btn:focus::before {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.changelog-navigator .dropdown button.btn iconify-icon,
+.changelog-navigator .dropdown button.btn span {
+  color: #212529 !important;
+}
+
+.changelog-navigator .dropdown button.btn::after {
+  color: #212529 !important;
+  border-top-color: #212529 !important;
+}
+
+.changelog-navigator .dropdown button.btn:hover::after,
+.changelog-navigator .dropdown button.btn:focus::after {
+  color: #212529 !important;
+  border-top-color: #212529 !important;
+}
+
+/* Dark mode button styles */
+[data-bs-theme="dark"] .changelog-navigator .dropdown button.btn::before {
+  background: #282828;
+}
+
+[data-bs-theme="dark"] .changelog-navigator .dropdown button.btn:hover::before,
+[data-bs-theme="dark"] .changelog-navigator .dropdown button.btn:focus::before {
+  background: rgba(40, 40, 40, 0.8);
+}
+
+[data-bs-theme="dark"] .changelog-navigator .dropdown button.btn iconify-icon,
+[data-bs-theme="dark"] .changelog-navigator .dropdown button.btn span {
+  color: white !important;
+}
+
+[data-bs-theme="dark"] .changelog-navigator .dropdown button.btn::after {
+  color: white !important;
+  border-top-color: white !important;
+}
+
+[data-bs-theme="dark"] .changelog-navigator .dropdown button.btn:hover::after,
+[data-bs-theme="dark"] .changelog-navigator .dropdown button.btn:focus::after {
+  color: white !important;
+  border-top-color: white !important;
+}
+
+/* Light mode styles */
+.changelog-navigator .dropdown-menu {
+  background-color: #ffffff;
+  border: none;
+  box-shadow: 0px 3px 14.1px 0px #0000001A;
+}
+
+.changelog-navigator .dropdown-item {
+  color: #212529;
+}
+
+.changelog-navigator .dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #1e2125;
+}
+
+.changelog-navigator .card::before {
+  background: #ffffff;
+}
+
+.changelog-navigator .card-body {
+  background-color: transparent;
+  color: #212529;
+}
+
+/* Dark mode styles with contrast */
+[data-bs-theme="dark"] .changelog-navigator .dropdown-menu {
+  background-color: #1E1E1E;
+  border: none;
+  box-shadow: 0px 3px 14.1px 0px #0000001A;
+}
+
+[data-bs-theme="dark"] .changelog-navigator .dropdown-item {
+  color: #ffffff;
+}
+
+[data-bs-theme="dark"] .changelog-navigator .dropdown-item:hover {
+  background-color: #282828;
+  color: #ffffff;
+}
+
+[data-bs-theme="dark"] .changelog-navigator .card::before {
+  background: #1E1E1E;
+}
+
+[data-bs-theme="dark"] .changelog-navigator .card-body {
+  background-color: transparent;
+  color: #ffffff;
+}
+
+[data-bs-theme="dark"] .changelog-navigator .changelog-card {
+  background-color: #1E1E1E;
+  border-color: rgb(229, 231, 235);
+}
+
+[data-bs-theme="dark"] .changelog-navigator .changelog-card:hover {
+  border-color: #0095d5;
+  background-color: #282828;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle dropdown navigation
+  document.querySelectorAll('.changelog-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.dataset.target;
+      const title = this.dataset.title;
+      
+      // Update selected period text
+      document.getElementById('selectedPeriod').textContent = title;
+      
+      // Hide all sections
+      document.querySelectorAll('.changelog-section').forEach(section => {
+        section.classList.add('d-none');
+        section.classList.remove('active');
+      });
+      
+      // Show target section
+      const targetSection = document.getElementById(targetId);
+      if (targetSection) {
+        targetSection.classList.remove('d-none');
+        targetSection.classList.add('active');
+        
+        // Smooth scroll to the content
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+  
+  // Handle card navigation
+  document.querySelectorAll('.changelog-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const targetId = this.dataset.target;
+      const link = document.querySelector(`.changelog-link[data-target="${targetId}"]`);
+      if (link) {
+        link.click();
+      }
+    });
+  });
+});
+</script>
