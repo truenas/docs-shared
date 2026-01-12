@@ -4,10 +4,12 @@
 <div class="container-fluid flex-column flex-md-row">
   <a class="navbar-brand" href="{{ .Site.Home.RelPermalink }}">
     <span class="navbar-brand__logo navbar-logo-container">
+        {{ if fileExists "static/images/site-logo-color.svg" }}
         <span class="navbar-logo navbar-logo-color">
-            {{ $colorLogo := readFile "static/images/connect-logo-full-color-horizontal.svg" }}
+            {{ $colorLogo := readFile "static/images/site-logo-color.svg" }}
             {{ $colorLogo | safeHTML }}
         </span>
+        {{ end }}
         <span class="navbar-logo navbar-logo-white">
             {{ with resources.Get "icons/logo.svg" }}
                 {{ ( . | minify).Content | safeHTML }}
