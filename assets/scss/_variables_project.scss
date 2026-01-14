@@ -133,6 +133,28 @@ $list-inline-padding: $spacer;
 .navbar-logo svg {
   display: block;
   vertical-align: middle;
+  height: auto;
+  width: auto;
+  max-height: 36px; /* Default desktop size */
+}
+
+/* Responsive logo sizing */
+@media (max-width: 1024px) {
+  .navbar-logo svg {
+    max-height: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-logo svg {
+    max-height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-logo svg {
+    max-height: 24px;
+  }
 }
 
 .navbar-logo-color {
@@ -311,6 +333,25 @@ $list-inline-padding: $spacer;
   width: auto;
 }
 
+/* Responsive hub wordmark sizing */
+@media (max-width: 1024px) {
+  .docs-hub-wordmark svg {
+    height: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .docs-hub-wordmark svg {
+    height: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .docs-hub-wordmark svg {
+    height: 12px;
+  }
+}
+
 .docs-hub-wordmark-color {
   position: relative;
   z-index: 1;
@@ -367,6 +408,118 @@ $list-inline-padding: $spacer;
 .td-navbar .navbar-docs-hub:hover .docs-hub-wordmark,
 .td-navbar .navbar-docs-hub .nav-link:hover .docs-hub-wordmark {
   opacity: 0.75;
+}
+
+/* Mobile hamburger menu - ONLY at smallest breakpoint */
+.navbar-toggler {
+  display: none; /* Hidden by default */
+  border: none;
+  padding: 0.25rem 0.5rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  background-color: transparent;
+  border-radius: 0.25rem;
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.navbar-toggler:focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(0, 149, 213, 0.25);
+}
+
+.navbar-toggler-icon {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+/* ONLY apply hamburger menu at smallest mobile breakpoint */
+@media (max-width: 480px) {
+  /* Show hamburger button */
+  .navbar-toggler {
+    display: block;
+    margin-left: auto;
+  }
+
+  /* Adjust container-fluid to use flexbox for logo + hamburger layout */
+  .td-navbar .container-fluid {
+    position: relative;
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .td-navbar .navbar-brand {
+    flex: 0 0 auto;
+  }
+
+  /* Hide nav items by default, show when expanded */
+  .td-navbar .td-navbar-nav-scroll.collapse-mobile {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bs-dark);
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    flex-basis: 100%;
+  }
+
+  /* Show nav items when hamburger is clicked (toggle .show class via JS) */
+  .td-navbar .td-navbar-nav-scroll.collapse-mobile.show {
+    display: block !important;
+  }
+
+  /* Stack nav items vertically on small mobile */
+  .td-navbar .navbar-nav {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .td-navbar .navbar-nav .nav-item {
+    width: 100%;
+  }
+
+  .td-navbar .navbar-nav .nav-link {
+    padding: 0.75rem 1rem;
+    width: 100%;
+  }
+
+  /* Make dropdown menus full width on small mobile */
+  .td-navbar .dropdown-menu {
+    position: static !important;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.05);
+    margin-top: 0.5rem;
+  }
+
+  /* Reduce navbar padding on smallest mobile */
+  body:not(.td-home) .td-navbar {
+    padding: 0.6rem 1rem !important;
+  }
+
+  .td-home .td-navbar.navbar-scrolled {
+    padding: 0.5rem 1rem !important;
+  }
+}
+
+/* Above 480px: always show nav items, hide hamburger */
+@media (min-width: 481px) {
+  .td-navbar .td-navbar-nav-scroll.collapse-mobile {
+    display: flex !important;
+  }
 }
 
 /* Show/hide wordmark based on theme */
