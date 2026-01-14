@@ -90,8 +90,8 @@ $h5-font-size: $font-size-base * 1.15 !default; // TODO: consider using BS defau
 
 // Space
 
-$td-block-space-top-base: 4 * $spacer !default;
-$td-block-space-bottom-base: 4 * $spacer !default;
+$td-block-space-top-base: 2.5 * $spacer !default;
+$td-block-space-bottom-base: 2.5 * $spacer !default;
 
 // Pagination
 
@@ -122,20 +122,7 @@ $list-inline-padding: $spacer;
 }
 
 // Fix alignment for homepage navbar - full-width mode (non-scrolled)
-// Push nav items down to match logo center
-.td-home .td-navbar.navbar-visible:not(.navbar-scrolled) .nav-link {
-  padding-top: 0.75rem !important;
-  padding-bottom: 0.25rem !important;
-}
-
-// Push search button and sign in button down in non-scrolled mode
-.td-home .td-navbar.navbar-visible:not(.navbar-scrolled) .modern-search-button {
-  margin-top: 0.25rem !important;
-}
-
-.td-home .td-navbar.navbar-visible:not(.navbar-scrolled) .btn-secondary {
-  margin-top: 0.25rem !important;
-}
+// Remove asymmetric padding - use flexbox alignment instead
 
 .navbar-logo {
   display: block;
@@ -149,24 +136,54 @@ $list-inline-padding: $spacer;
 }
 
 .navbar-logo-color {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   z-index: 1;
 }
 
+// Preserve original SVG colors in color logo - enforce the SVG's internal color classes
+.navbar-logo-color svg .cls-1 {
+  fill: #3cf !important; /* Cyan/light blue */
+}
+
+.navbar-logo-color svg .cls-2 {
+  fill: #adadad !important; /* Gray */
+}
+
+.navbar-logo-color svg .cls-3 {
+  fill: #0095d5 !important; /* TrueNAS primary blue */
+}
+
 .navbar-logo-white {
-  position: relative;
-  filter: brightness(0) invert(1); /* turns logo white */
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 2;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  transition: clip-path 0.25s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.navbar-logo-white svg,
+.navbar-logo-white svg * {
+  fill: #fff !important;
+  stroke: #fff !important;
+}
+
+.navbar-logo-white svg {
+  shape-rendering: geometricPrecision;
 }
 
 .navbar-logo-black {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 2;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
   display: none; /* hidden by default */
+  transition: clip-path 0.25s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .navbar-logo-black svg,
@@ -175,24 +192,32 @@ $list-inline-padding: $spacer;
   stroke: #212529 !important;
 }
 
-// Dark mode: show white logo, hide black logo
-[data-bs-theme="dark"] .navbar-logo-white {
-  display: block;
-}
-
-[data-bs-theme="dark"] .navbar-logo-black {
-  display: none;
+.navbar-logo-black svg {
+  shape-rendering: geometricPrecision;
 }
 
 // Light mode: show black logo, hide white logo
 [data-bs-theme="light"] body:not(.td-page):not(.td-section) .navbar-logo-white,
 [data-bs-theme="light"] body.cover-page .navbar-logo-white {
-  display: none;
+  display: none !important;
 }
 
 [data-bs-theme="light"] body:not(.td-page):not(.td-section) .navbar-logo-black,
 [data-bs-theme="light"] body.cover-page .navbar-logo-black {
-  display: block;
+  display: block !important;
+}
+
+// Dark mode: show white logo, hide black logo
+[data-bs-theme="dark"] .navbar-logo-white,
+[data-bs-theme="dark"] body:not(.td-page):not(.td-section) .navbar-logo-white,
+[data-bs-theme="dark"] body.cover-page .navbar-logo-white {
+  display: block !important;
+}
+
+[data-bs-theme="dark"] .navbar-logo-black,
+[data-bs-theme="dark"] body:not(.td-page):not(.td-section) .navbar-logo-black,
+[data-bs-theme="dark"] body.cover-page .navbar-logo-black {
+  display: none !important;
 }
 
 // Default (dark navbar): color wipe effect
@@ -229,9 +254,19 @@ $list-inline-padding: $spacer;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* No wipe on blue navbar */
 }
 
+// Dropdown icon rendering improvements
+.dropdown-icon {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  shape-rendering: geometricPrecision;
+}
+
 .td-navbar .navbar-nav .nav-link {
   color: #fff !important; /* Force white text */
   text-shadow: none !important; /* Remove any text shadow */
+  display: flex !important;
+  align-items: center !important;
+  line-height: 1.5 !important;
 }
 
 .td-navbar .navbar-nav .nav-link:hover,
@@ -253,6 +288,75 @@ $list-inline-padding: $spacer;
   color: #fff !important;
 }
 
+/* Docs hub wordmark styles */
+.navbar-docs-hub .nav-link {
+  position: relative;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.25rem;
+  line-height: 1.5 !important;
+}
+
+.docs-hub-wordmark {
+  display: inline;
+  line-height: 0;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.docs-hub-wordmark svg {
+  display: block;
+  shape-rendering: geometricPrecision;
+  height: 18px;
+  width: auto;
+}
+
+.docs-hub-wordmark-color {
+  position: relative;
+  z-index: 1;
+}
+
+// Enforce SVG colors for dropdown color wordmark
+.docs-hub-wordmark-color svg .cls-1 {
+  fill: #3cf !important; /* Cyan/light blue */
+}
+
+.docs-hub-wordmark-color svg .cls-2 {
+  fill: #adadad !important; /* Gray */
+}
+
+.docs-hub-wordmark-color svg .cls-3 {
+  fill: #0095d5 !important; /* TrueNAS primary blue */
+}
+
+.docs-hub-wordmark-white {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.docs-hub-wordmark-white svg,
+.docs-hub-wordmark-white svg * {
+  fill: #fff !important;
+  stroke: #fff !important;
+}
+
+.docs-hub-wordmark-black {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.docs-hub-wordmark-black svg,
+.docs-hub-wordmark-black svg * {
+  fill: #212529 !important;
+  stroke: #212529 !important;
+}
+
 /* Docs hub wordmark hover effect - darken like other navbar items */
 .td-navbar .docs-hub-wordmark {
   filter: brightness(1);
@@ -266,22 +370,34 @@ $list-inline-padding: $spacer;
 }
 
 /* Show/hide wordmark based on theme */
-/* Dark mode - show white wordmark, hide black */
+/* Dark mode - show white wordmark, hide black and color */
 [data-bs-theme="dark"] .docs-hub-wordmark-white {
   display: inline !important;
+  position: static !important;
+  transform: none !important;
 }
 
 [data-bs-theme="dark"] .docs-hub-wordmark-black {
   display: none !important;
 }
 
-/* Light mode - show black wordmark, hide white */
+[data-bs-theme="dark"] .docs-hub-wordmark-color {
+  display: none !important;
+}
+
+/* Light mode - show black wordmark, hide white and color */
 [data-bs-theme="light"] .docs-hub-wordmark-white {
   display: none !important;
 }
 
 [data-bs-theme="light"] .docs-hub-wordmark-black {
   display: inline !important;
+  position: static !important;
+  transform: none !important;
+}
+
+[data-bs-theme="light"] .docs-hub-wordmark-color {
+  display: none !important;
 }
 
 /* Remove transform animations from navbar links only - exclude search */
@@ -322,7 +438,7 @@ body:not(.td-home) .td-navbar {
   background: var(--bs-dark);
   width: 100%;
   margin: 0;
-  padding: 0.6rem 1rem;
+  padding: 0.6rem 2.5rem;
   box-shadow: 0 2px 8px rgba(0, 149, 213, 0.15) !important;
 }
 
@@ -403,6 +519,30 @@ body:not(.td-home) .td-navbar {
 [data-bs-theme="light"] body:not(.td-page):not(.td-section) .td-navbar .dropdown-menu .dropdown-item:hover img,
 [data-bs-theme="light"] body.cover-page .td-navbar .dropdown-menu .dropdown-item:hover img {
   filter: invert(0.4) sepia(1) saturate(10) hue-rotate(180deg) brightness(0.9) !important;
+}
+
+// Dropdown hub menu icon theming
+// Light mode - make themed icons/SVGs dark
+[data-bs-theme="light"] body:not(.td-page):not(.td-section) .navbar-docs-hub .dropdown-menu .dropdown-icon-themed,
+[data-bs-theme="light"] body.cover-page .navbar-docs-hub .dropdown-menu .dropdown-icon-themed {
+  filter: brightness(0) saturate(100%) invert(13%) sepia(4%) saturate(0%) hue-rotate(222deg) brightness(95%) contrast(90%) !important;
+}
+
+[data-bs-theme="light"] body:not(.td-page):not(.td-section) .navbar-docs-hub .dropdown-menu .dropdown-icon-themed svg,
+[data-bs-theme="light"] body.cover-page .navbar-docs-hub .dropdown-menu .dropdown-icon-themed svg {
+  fill: #212529 !important;
+  stroke: #212529 !important;
+}
+
+// Dark mode - invert black icons to white
+[data-bs-theme="dark"] .navbar-docs-hub .dropdown-menu .dropdown-icon-themed,
+[data-bs-theme="dark"] .navbar-docs-hub .dropdown-menu .dropdown-icon-themed svg {
+  filter: brightness(0) invert(1) !important;
+}
+
+[data-bs-theme="dark"] .navbar-docs-hub .dropdown-menu .dropdown-icon-themed svg {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 // Base styling for theme toggle icons - remove opacity
@@ -517,10 +657,17 @@ body:not(.td-home) .td-navbar {
 .td-page:not(.cover-page) .docs-hub-wordmark-white,
 .td-section:not(.cover-page) .docs-hub-wordmark-white {
   display: inline !important;
+  position: static !important;
+  transform: none !important;
 }
 
 .td-page:not(.cover-page) .docs-hub-wordmark-black,
 .td-section:not(.cover-page) .docs-hub-wordmark-black {
+  display: none !important;
+}
+
+.td-page:not(.cover-page) .docs-hub-wordmark-color,
+.td-section:not(.cover-page) .docs-hub-wordmark-color {
   display: none !important;
 }
 
@@ -680,7 +827,8 @@ body.td-page.cover-page .td-navbar.navbar-scrolled .container-fluid {
 // Adjust container inside pill
 .td-navbar.navbar-scrolled .container-fluid {
   max-width: 100% !important;
-  padding: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 // Responsive pill sizing for non-homepage, non-docs pages
@@ -713,7 +861,7 @@ body.td-page.cover-page .td-navbar.navbar-scrolled .container-fluid {
   max-width: 1400px !important;
   background: var(--bs-dark) !important;
   border-radius: 50px !important;
-  padding: 0.6rem 2rem !important;
+  padding: 0.6rem 2.5rem !important;
   margin: 0 !important;
   z-index: 1500 !important;
   transition: none !important;
@@ -724,11 +872,24 @@ body.td-page.cover-page .td-navbar.navbar-scrolled .container-fluid {
   align-items: center !important;
 }
 
+.td-home .td-navbar:not(.navbar-scrolled) .container-fluid {
+  // Padding applied to .td-navbar element instead
+}
+
 .td-home .td-navbar.navbar-scrolled .navbar-nav {
   align-items: center !important;
 }
 
 .td-home .td-navbar.navbar-scrolled .nav-item:not(.d-lg-none):not(.d-none) {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.td-home .td-navbar:not(.navbar-scrolled) .navbar-nav {
+  align-items: center !important;
+}
+
+.td-home .td-navbar:not(.navbar-scrolled) .nav-item:not(.d-lg-none):not(.d-none) {
   display: flex !important;
   align-items: center !important;
 }
@@ -773,6 +934,7 @@ body.td-page.cover-page .td-navbar.navbar-scrolled .container-fluid {
   opacity: 1 !important;
   display: block !important;
   box-shadow: 0 2px 8px rgba(0, 149, 213, 0.15) !important;
+  padding: 0.6rem 2.5rem !important;
 }
 
 // When toggled AND scrolled, ensure pill centering and visibility
