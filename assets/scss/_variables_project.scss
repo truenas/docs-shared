@@ -284,11 +284,12 @@ $list-inline-padding: $spacer;
 }
 
 .td-navbar .navbar-nav .nav-link {
-  color: #fff !important; /* Force white text */
-  text-shadow: none !important; /* Remove any text shadow */
+  color: #fff !important;
+  text-shadow: none !important;
   display: flex !important;
   align-items: center !important;
-  line-height: 1.5 !important;
+  line-height: normal !important;
+  height: 100%;
 }
 
 .td-navbar .navbar-nav .nav-link:hover,
@@ -316,39 +317,41 @@ $list-inline-padding: $spacer;
   display: inline-flex !important;
   align-items: center !important;
   gap: 0.25rem;
-  line-height: 1.5 !important;
+  line-height: 1 !important;
 }
 
 .docs-hub-wordmark {
-  display: inline;
-  line-height: 0;
-  transform: translateZ(0);
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  transform: translateZ(0) translateY(2px);
   backface-visibility: hidden;
 }
 
 .docs-hub-wordmark svg {
   display: block;
   shape-rendering: geometricPrecision;
-  height: 18px;
+  height: 16px;
   width: auto;
+  vertical-align: middle;
 }
 
 /* Responsive hub wordmark sizing */
 @media (max-width: 1024px) {
   .docs-hub-wordmark svg {
-    height: 16px;
+    height: 13px;
   }
 }
 
 @media (max-width: 768px) {
   .docs-hub-wordmark svg {
-    height: 14px;
+    height: 12px;
   }
 }
 
 @media (max-width: 480px) {
   .docs-hub-wordmark svg {
-    height: 12px;
+    height: 10px;
   }
 }
 
@@ -1161,7 +1164,6 @@ body.td-page.cover-page .td-navbar.navbar-scrolled .container-fluid {
 
 // Custom ultra-minimal cover block height
 .td-cover-block--height-micro {
-  min-height: 25vh !important;
   padding-top: 1rem !important;
   padding-bottom: 1rem !important;
 }
@@ -1184,7 +1186,25 @@ body.td-page.cover-page .td-navbar.navbar-scrolled .container-fluid {
 
 // Reduce space between buttons and Essentials header
 .td-home .td-cover-block + section {
-  padding-top: 0.5rem !important; // Even less space above Essentials header
+  padding-top: 0 !important; // No extra space above section
+}
+
+// Override td-block-padding on sections after cover block (base styles)
+.td-home .td-cover-block + section.row,
+.td-home .td-cover-block + section.td-box,
+.td-home.td-default main section.row,
+.td-home.td-default main section.td-box {
+  padding-top: 0 !important;
+}
+
+// Override Bootstrap media query padding on home page sections after cover
+@media (min-width: 768px) {
+  .td-home .td-cover-block + section.row,
+  .td-home .td-cover-block + section.td-box,
+  .td-home.td-default main section.row,
+  .td-home.td-default main section.td-box {
+    padding-top: 0 !important;
+  }
 }
 
 // Extend cover background to cover Essentials section - responsive height
@@ -1193,6 +1213,11 @@ body.td-page.cover-page .td-navbar.navbar-scrolled .container-fluid {
   background-size: cover;
   background-position: center top;
   position: relative;
+}
+
+// Override for micro height - respect the height parameter even on home page
+.td-home .td-cover-block.td-cover-block--height-micro {
+  min-height: auto !important;
 }
 
 // Make homepage button text and icons white

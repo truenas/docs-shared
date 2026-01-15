@@ -1975,16 +1975,16 @@ document.addEventListener('DOMContentLoaded', function() {
   if (document.querySelector('.blocks-cover, .td-cover-block')) {
     document.body.classList.add('cover-page');
     document.documentElement.classList.add('cover-page');
-    
+
     // Only force page background, don't interfere with navbar
     document.body.style.setProperty('background-color', '#282828', 'important');
     document.body.style.setProperty('color', 'white', 'important');
-    
+
     // Override Bootstrap CSS custom properties for page background only
     document.documentElement.style.setProperty('--bs-body-bg', '#282828', 'important');
     document.documentElement.style.setProperty('--bs-body-color', '#ffffff', 'important');
   }
-  
+
   // Add navbar toggle for home page only
   if (document.body && document.body.classList && document.body.classList.contains('td-home')) {
     // Create toggle button immediately
@@ -2078,47 +2078,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Disabled: Using simple search interface instead -->
 <!-- <script defer src="/js/pagefind-search.js"></script> -->
 
-<!-- DocsBot integration -->
-<script type="text/javascript">window.DocsBotAI=window.DocsBotAI||{},DocsBotAI.init=function(e){return new Promise((t,r)=>{var n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src="https://widget.docsbot.ai/chat.js";let o=document.getElementsByTagName("script")[0];o.parentNode.insertBefore(n,o),n.addEventListener("load",()=>{let n;Promise.all([new Promise((t,r)=>{window.DocsBotAI.mount(Object.assign({}, e)).then(t).catch(r)}),(n=function e(t){return new Promise(e=>{if(document.querySelector(t))return e(document.querySelector(t));let r=new MutationObserver(n=>{if(document.querySelector(t))return e(document.querySelector(t)),r.disconnect()});r.observe(document.body,{childList:!0,subtree:!0})})})("#docsbotai-root"),]).then(()=>t()).catch(r)}),n.addEventListener("error",e=>{r(e.message)})})};</script>
-<script type="text/javascript">
-  DocsBotAI.init({
-    id: "c6l7vGyugnoP9SSSoNXy/h6qDF4J2h3xfHKO9Nm6r",
-    options: {
-      customCSS: `
-        .floating-button {
-          position: fixed !important;
-          bottom: 20px !important;
-          right: 20px !important;
-          background: #0095d5 !important;
-          border-radius: 30px !important;
-          padding: 12px 24px !important;
-          border: none !important;
-          overflow: hidden !important;
-          z-index: 9999 !important;
-          transition: all 0.3s ease !important;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
-          width: auto !important;
-          max-width: none !important;
-        }
-        .floating-button::before {
-          content: '' !important;
-          position: absolute !important;
-          top: 0 !important;
-          left: -10% !important;
-          width: 0 !important;
-          bottom: 0 !important;
-          background: #71bf44 !important;
-          transition: width 0.25s ease !important;
-          transform: skewX(-10deg) !important;
-          z-index: -1 !important;
-        }
-        .floating-button:hover::before {
-          width: 120% !important;
-        }
-      `
-    }
-  });
-</script>
+<!-- DocsBot integration removed - now loaded via docsbot-ai.html partial and triggered by navbar button -->
 
 <!-- Add Jira Issue Collector feedback solution -->
 <script type="text/javascript" src="https://ixsystems.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/1jmxwi/b/8/c95134bc67d3a521bb3f4331beb9b804/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=b430af64"></script>
@@ -2130,8 +2090,8 @@ document.addEventListener('DOMContentLoaded', function() {
   /* Position 3/4 down the right side */
   top: 75% !important;
 
-  /* Use primary color for background */
-  background-color: var(--bs-primary) !important;
+  /* Use TrueNAS blue for background */
+  background-color: #0095d5 !important;
 
   /* Remove border */
   border: none !important;
@@ -2174,5 +2134,8 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 </style>
+
+<!-- Enhanced Search CSS -->
+<link rel="stylesheet" href="/css/search-enhanced.css" type="text/css">
 
 

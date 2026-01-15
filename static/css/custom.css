@@ -1,0 +1,271 @@
+/* Fix Documentation Hub logo positioning in blue navbar */
+.gdoc-brand {
+  display: flex !important;
+  align-items: center !important;
+  padding: 0.75rem 0 !important;
+}
+
+.gdoc-brand__img {
+  max-height: 40px !important;
+  width: auto !important;
+}
+
+/* Software Status page with sidebar */
+.software-status-wrapper.has-sidebar {
+  padding-right: 18rem;
+}
+
+/* Software Status page sidebar - override hugo-modules CSS with high specificity */
+aside.sidebar-right {
+  position: fixed !important;
+  top: 100px !important;
+  right: 20px !important;
+  width: 16rem !important;
+  z-index: 100 !important;
+  bottom: auto !important;
+  left: auto !important;
+  flex: none !important;  /* Override flex from hugo-modules */
+  max-width: 16rem !important;  /* Prevent expansion */
+}
+
+.toc-panel {
+  position: relative !important;
+  overflow-y: auto;
+  padding: 1rem;
+  font-size: 14px;
+  background-color: var(--body-background);
+  color: var(--body-font-color);
+  scrollbar-width: thin;
+  max-height: calc(100vh - 120px);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Manual dark mode override - use color-mode not color-theme */
+:root[color-mode=dark] .toc-panel {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+/* Manual light mode override */
+:root[color-mode=light] .toc-panel {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+/* Fix icon alignment in jump-to buttons */
+.jump-to-button {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.jump-to-button .icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 10px !important;
+  flex-shrink: 0 !important;
+}
+
+.jump-to-button .icon svg {
+  display: block !important;
+  vertical-align: middle !important;
+}
+
+.jump-to-button .text {
+  flex: 1;
+  line-height: 16px;
+}
+
+@media (max-width: 1400px) {
+  .sidebar-right {
+    display: none;
+  }
+
+  .software-status-wrapper.has-sidebar {
+    padding-right: 0;
+  }
+}
+
+/* Standardized table style */
+.truetable {
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+.truetable td, .truetable th {
+  border: .5px solid var(--accent-color);
+  padding: .5rem;
+}
+.truetable th {
+  text-align: left;
+  font-size: 17px;
+}
+.truetable tr:hover {background-color: var(--accent-color);}
+.truetable tr:nth-child(even):hover {background-color: var(--accent-color)!important;}
+
+.truetable thead tr:hover {
+    background-color: transparent;  /* Remove hover effect from header */
+  }
+
+/* Adjust for tables inside Enterprise shortcode */
+.gdoc-hint.note .truenas-enterprise__text .truetable tr {background-color: rgba(134,142,150,.05);}
+.gdoc-hint.note .truenas-enterprise__text .truetable tr:hover {background-color: #e6e6e6!important;}
+.gdoc-hint.note .truenas-enterprise__text .truetable tr:nth-child(even) {background-color: #f3f9fd;}
+/* end enterprise shortcode adjust */
+.gdoc-markdown table:not(.lntable):not(.highlight) thead {
+	border-bottom: 1px solid var(--accent-color);
+}
+/* Adjust to prevent tables in expand elements overflowing container */
+.gdoc-markdown table:not(.lntable):not(.highlight) {
+	width: unset;
+}
+/* End Adjust to prevent tables in expand elements overflowing container */
+
+/* Adjust for additional class tn-blue */
+.tn-blue table thead {
+    background-color: #0095d5;
+    color: white;
+}
+/* End standardized table styling */
+
+/* Section box styling */
+.section-box {
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 15px;
+	transition: 0.3s;
+	background-color: rgb(248, 249, 250);
+}
+.section-box:hover {
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+.section-box-header {
+	color: white;
+	background-color: #0095d5;
+	margin: 0;
+	padding: 1rem 1.5rem;
+	border-radius: 15px 15px 0 0;
+}
+
+.section-divider {
+    width: 80px;
+    height: 2px;
+    background-color: #0095d5 !important;
+    border: none;
+    margin: .5rem auto;
+  }
+
+/* Adjust section-box for TrueNAS Systems page cards */
+.ixprods {
+	color: var(--body-font-color);
+	padding: 0 .75rem 0 .75rem;
+}
+a.section-box:hover {
+	text-decoration: none;
+}
+/* End adjust section-box for TrueNAS Systems page cards */
+.box-image {
+	padding-top: .5rem;
+	text-align: center;
+}
+.prod-card-img {
+	width: 7.5em;
+	height: 11.25em!important;
+	object-fit: contain;
+}
+.box-image > img:hover {
+	box-shadow: none;
+}
+.section-box > p {
+	text-align: center;
+	line-height: 1rem;
+	margin-block-start: .5rem;
+	margin-block-end: .5rem;
+}
+
+/* Section box link styling */
+.section-box a {
+	color: #0095d5;
+	text-decoration: none;
+}
+
+.section-box a:hover {
+	color: #36bdeb;
+	text-decoration: none;
+}
+
+.section-box a:visited {
+	color: #0095d5;
+	text-decoration: none;
+}
+
+.section-box a:visited:hover {
+	color: #36bdeb;
+	text-decoration: none;
+}
+
+/* Style for tab navigation */
+.section-tabs {
+  display: flex;
+  justify-content: center;
+  background-color: var(--accent-color);
+}
+/* Style for individual tab */
+.section-tab {
+  padding: .5rem .5rem;
+  margin: 0 5px;
+  cursor: pointer;
+  background-color: var(--accent-color);
+  font-weight: 600;
+  border: 2px solid transparent;
+  box-sizing: border-box;
+}
+
+/* Dark mode support */
+@media screen and (prefers-color-scheme: dark) {
+	.section-box{
+		background-color: #475d6b;
+	}
+    .section-tab {
+        color: white;
+    }
+    .section-tab.active {
+        background-color: #475d6b;
+    }
+}
+@media screen and (prefers-color-scheme: light) {
+    .section-tab {
+        color: var(--body-font-color);
+    }
+    .section-tab.active {
+        background-color: rgb(248, 249, 250);
+    }
+}
+
+/* Manual theme overrides - use color-mode not color-theme */
+:root[color-mode=dark] {
+	.section-box{
+		background-color: #475d6b;
+	}
+    .section-tab {
+        color: white;
+    }
+    .section-tab.active {
+        background-color: #475d6b;
+    }
+}
+
+:root[color-mode=light] {
+	.section-box {
+		background-color: rgb(248, 249, 250);
+	}
+    .section-tab {
+        color: var(--body-font-color);
+    }
+    .section-tab.active {
+        background-color: rgb(248, 249, 250);
+    }
+}
+
+/* Reduce cover block height on home page to minimize white space */
+
+/* Fix home page cover block spacing - remove extra vertical space */

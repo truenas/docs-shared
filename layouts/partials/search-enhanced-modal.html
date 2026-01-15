@@ -1,0 +1,99 @@
+{{/* Enhanced Multi-Site Search - Based on working search-simple.html */}}
+
+{{/* Site configuration injection */}}
+<script>
+  {{- $recommendedVersion := "" -}}
+  {{- with .Site.Data.properties.software_status_config.table_data.general.community.version -}}
+    {{- $recommendedVersion = replaceRE "^(\\d+\\.\\d+).*" "$1" . -}}
+  {{- else -}}
+    {{- $recommendedVersion = "25.04" -}}
+  {{- end -}}
+
+  window.SITE_SEARCH_CONFIG = {
+    siteName: "{{ .Site.Params.search.siteName }}",
+    siteKey: "{{ .Site.Params.search.siteKey }}",
+    defaultVersion: "{{ $recommendedVersion }}",
+    showVersionFilter: {{ .Site.Params.search.showVersionFilter | default true }}
+  };
+</script>
+
+<!-- Enhanced Search Overlay -->
+<div id="enhanced-search-overlay" class="simple-search-overlay" style="display: none;">
+  <div class="simple-search-container">
+    <div class="simple-search-header">
+      <h5>Search Documentation</h5>
+      <button type="button" class="simple-search-close" onclick="closeEnhancedSearch()" aria-label="Close">&times;</button>
+    </div>
+    <div class="simple-search-body">
+      <div id="search-input-container">
+        <input type="search" id="enhanced-search-input" placeholder="Search..." autocomplete="off" />
+        <button id="enhanced-search-submit" class="search-submit-inline" aria-label="Search">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+
+      {{/* Enhanced Filters Section */}}
+      <div class="enhanced-search-filters">
+        <div class="filter-header">Show Results From:</div>
+        <div class="filter-checkboxes">
+          {{/* Version Filter Dropdown */}}
+          <div class="version-filter-container" id="version-filter-container">
+            <div class="version-filter-label">
+              <span id="version-label-text">Version</span>
+            </div>
+            <div class="docs-version-menu" id="docs-version-menu">
+              <label class="docs-version-option">
+                <input type="checkbox" data-site="docs-26.04">
+                <span>26.04</span>
+              </label>
+              <label class="docs-version-option">
+                <input type="checkbox" data-site="docs-25.10">
+                <span>25.10</span>
+              </label>
+              <label class="docs-version-option">
+                <input type="checkbox" data-site="docs-25.04">
+                <span>25.04</span>
+              </label>
+              <label class="docs-version-option">
+                <input type="checkbox" data-site="docs-24.10">
+                <span>24.10</span>
+              </label>
+            </div>
+          </div>
+
+          {{/* Site Checkboxes */}}
+          <label class="filter-checkbox">
+            <input type="checkbox" id="docs-main-toggle" checked>
+            <span>Docs</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" data-site="api" checked>
+            <span>API</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" data-site="apps" checked>
+            <span>Apps</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" data-site="security" checked>
+            <span>Security</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" data-site="connect" checked>
+            <span>Connect</span>
+          </label>
+        </div>
+      </div>
+
+      <div id="enhanced-search-count" class="enhanced-search-count" style="display:none;"></div>
+      <div id="enhanced-search-results" class="simple-search-results"></div>
+      <div id="enhanced-search-loading" class="enhanced-search-loading" style="display:none;">
+        <div class="loading-spinner"></div>
+        <p>Searching...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{/* Load multi-site search JavaScript */}}
+<script src="/js/search-multi-site.js"></script>

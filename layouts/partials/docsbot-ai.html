@@ -1,0 +1,188 @@
+{{/* DocsBotAI Integration for Enhanced Search */}}
+<!-- Chatbot Initialization Script -->
+<script type="text/javascript">
+  window.DocsBotAI = window.DocsBotAI || {};
+
+  DocsBotAI.init = function(c) {
+    return new Promise(function(e, o) {
+      var t = document.createElement("script");
+      t.type = "text/javascript";
+      t.async = true;
+      t.src = "https://widget.docsbot.ai/chat.js";
+      var n = document.getElementsByTagName("script")[0];
+      n.parentNode.insertBefore(t, n);
+      t.addEventListener("load", function() {
+        window.DocsBotAI.mount({
+          id: c.id,
+          supportCallback: c.supportCallback,
+          identify: c.identify,
+          options: c.options,
+          signature: c.signature
+        });
+
+        // Attach the click event to the AI search button
+        document.getElementById("ai-search-trigger").addEventListener("click", function() {
+          if (window.DocsBotAI.open) {
+            window.DocsBotAI.open();  // Open the chatbot
+          } else {
+            console.error("Chatbot open method not available.");
+          }
+        });
+
+        // Aggressively hide the default floating button
+        function forceHideFloatingButton() {
+          // Try multiple selectors to find any floating button
+          const selectors = [
+            'a.floating-button',
+            'a[role="button"].floating-button',
+            'a.has-label.floating-button',
+            'a[part="button"]',
+            'button.floating-button',
+            '[class*="floating-button"]'
+          ];
+
+          selectors.forEach(function(selector) {
+            const buttons = document.querySelectorAll(selector);
+            buttons.forEach(function(btn) {
+              // Only hide if it's not inside the modal wrapper
+              if (!btn.closest('.docsbot-wrapper')) {
+                btn.style.setProperty('display', 'none', 'important');
+                btn.style.setProperty('visibility', 'hidden', 'important');
+                btn.style.setProperty('opacity', '0', 'important');
+                btn.style.setProperty('pointer-events', 'none', 'important');
+                btn.style.setProperty('position', 'absolute', 'important');
+                btn.style.setProperty('left', '-9999px', 'important');
+                btn.remove(); // Nuclear option - just remove it from DOM
+              }
+            });
+          });
+        }
+
+        // Run multiple times to catch it whenever it appears
+        setTimeout(forceHideFloatingButton, 100);
+        setTimeout(forceHideFloatingButton, 500);
+        setTimeout(forceHideFloatingButton, 1000);
+        setTimeout(forceHideFloatingButton, 2000);
+        setTimeout(forceHideFloatingButton, 3000);
+
+        // Set up mutation observer to remove it if it appears later
+        const observer = new MutationObserver(forceHideFloatingButton);
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['style', 'class']
+        });
+
+        e(); // Resolve the promise
+      });
+      t.addEventListener("error", function(t) {
+        o(t.message);
+      });
+    });
+  };
+
+  DocsBotAI.init({
+    id: "c6l7vGyugnoP9SSSoNXy/h6qDF4J2h3xfHKO9Nm6r",
+    options: {
+      customCSS: `
+        .docsbot-wrapper {
+          display: flex;
+          flex-direction: column;
+          width: 90%;
+          max-width: 900px;
+          max-height: 85vh;
+          position: fixed;
+          left: 50% !important;
+          top: 5vh !important;
+          transform: translateX(-50%) !important;
+          z-index: 9999999 !important;
+          box-sizing: border-box;
+        }
+        .docsbot-content {
+          flex: 1 1 auto;
+          overflow-y: auto;
+        }
+        .docsbot-input {
+          flex-shrink: 0;
+          padding: 10px;
+          box-sizing: border-box;
+        }
+        /* Hide floating button completely */
+        a[role="button"].floating-button,
+        a.has-label.floating-button,
+        a[part="button"],
+        .floating-button,
+        a.floating-button,
+        button.floating-button,
+        [class*="floating-button"] {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          position: absolute !important;
+          left: -9999px !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+        .docsbot-chat-header {
+          display: flex;
+          align-items: center;
+          padding: 5px 10px;
+          transition: height 0.3s ease, padding 0.3s ease;
+        }
+        .docsbot-chat-header-content {
+          text-align: center;
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Minimize header when viewport height is below 600px */
+        @media (max-height: 600px) {
+          .docsbot-chat-header {
+            height: 50px; /* Minimized height */
+            padding: 2px 5px;
+          }
+          .docsbot-chat-header-content h1 {
+            font-size: 14px;
+          }
+          .docsbot-chat-header-content span {
+            display: none; /* Hides the description text */
+          }
+        }
+
+        /* Adjust layout for smaller screens */
+        @media (max-width: 768px) {
+          .docsbot-wrapper {
+            width: 95% !important;
+            max-height: 90vh !important;
+            top: 2vh !important;
+          }
+        }
+
+        .mobile-close-button {
+          display: flex !important; /* Forces the button to be visible */
+          background: #0095d5;
+          align-items: center;
+          padding: 5px 10px;
+          justify-content: center;
+          border-radius: inherit;
+          position: absolute;
+          top: 10px !important;
+          right: 10px !important;
+          left: auto !important;
+          box-shadow: none;
+        }
+
+        .mobile-close-button:hover {
+          cursor: pointer;
+        }
+
+        .mobile-close-button:hover svg {
+          transform: scale(1.2);
+        }
+
+
+      `,
+    }
+  });
+</script>
