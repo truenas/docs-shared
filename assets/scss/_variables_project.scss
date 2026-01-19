@@ -41,7 +41,7 @@ $code-color: shade-color($secondary, 40%) !default;
   --bs-link-hover-color-rgb: 49, 190, 236 !important;
   --body-font-color: #f0f3f5;
   --accent-color: #212b32;
-  --card-background: #475d6b;
+  --card-background: #333333;
 }
 
 // UI element colors
@@ -3300,67 +3300,115 @@ section.row:has(.feature-card) .container {
 
 // Dark mode overrides for section-box-schedule tabs
 @media screen and (prefers-color-scheme: dark) {
+  .section-box-schedule .section-tabs {
+    background-color: rgb(33, 37, 41) !important;
+  }
+
   .section-box-schedule .section-tab {
+    background-color: rgb(33, 37, 41) !important;
     color: white !important;
   }
 
   .section-box-schedule .section-tab.active {
-    background-color: #475d6b !important;
+    background-color: #333333 !important;
     color: white !important;
+    border-top: 2px solid rgb(33, 37, 41) !important;
+    border-left: 2px solid rgb(33, 37, 41) !important;
+    border-right: 2px solid rgb(33, 37, 41) !important;
   }
 }
 
 :root[color-mode=dark] {
+  .section-box-schedule .section-tabs {
+    background-color: rgb(33, 37, 41) !important;
+  }
+
   .section-box-schedule .section-tab {
+    background-color: rgb(33, 37, 41) !important;
     color: white !important;
   }
 
   .section-box-schedule .section-tab.active {
-    background-color: #475d6b !important;
+    background-color: #333333 !important;
     color: white !important;
+    border-top: 2px solid rgb(33, 37, 41) !important;
+    border-left: 2px solid rgb(33, 37, 41) !important;
+    border-right: 2px solid rgb(33, 37, 41) !important;
   }
 }
 
 [data-bs-theme="dark"] {
+  .section-box-schedule .section-tabs {
+    background-color: rgb(33, 37, 41) !important;
+  }
+
   .section-box-schedule .section-tab {
+    background-color: rgb(33, 37, 41) !important;
     color: white !important;
   }
 
   .section-box-schedule .section-tab.active {
-    background-color: #475d6b !important;
+    background-color: #333333 !important;
     color: white !important;
+    border-top: 2px solid rgb(33, 37, 41) !important;
+    border-left: 2px solid rgb(33, 37, 41) !important;
+    border-right: 2px solid rgb(33, 37, 41) !important;
   }
 }
 
 // Dark mode for schedule boxes
 @media screen and (prefers-color-scheme: dark) {
   .section-box-schedule {
-    background-color: #475d6b !important;
+    background-color: #333333 !important;
   }
 }
 
 // Light mode overrides for section-box-schedule tabs
 [data-bs-theme="light"],
 :root:not([data-bs-theme="dark"]) {
+  .section-box-schedule .section-tabs {
+    background-color: var(--accent-color) !important;
+  }
+
   .section-box-schedule .section-tab {
+    background-color: var(--accent-color) !important;
     color: var(--body-font-color) !important;
   }
 
   .section-box-schedule .section-tab.active {
     background-color: rgb(248, 249, 250) !important;
     color: var(--body-font-color) !important;
+    border-top: 2px solid var(--accent-color) !important;
+    border-left: 2px solid var(--accent-color) !important;
+    border-right: 2px solid var(--accent-color) !important;
+  }
+}
+
+@media screen and (prefers-color-scheme: light) {
+  .section-box-schedule .section-tabs {
+    background-color: var(--accent-color) !important;
+  }
+
+  .section-box-schedule .section-tab {
+    background-color: var(--accent-color) !important;
+  }
+
+  .section-box-schedule .section-tab.active {
+    border-top: 2px solid var(--accent-color) !important;
+    border-left: 2px solid var(--accent-color) !important;
+    border-right: 2px solid var(--accent-color) !important;
   }
 }
 
 :root[color-mode=dark] {
   .section-box-schedule {
-    background-color: #475d6b !important;
+    background-color: #333333 !important;
   }
 }
 
 [data-bs-theme="dark"] {
   .section-box-schedule {
-    background-color: #475d6b !important;
+    background-color: #333333 !important;
   }
 }
 
@@ -3425,14 +3473,14 @@ section.row:has(.feature-card) .container {
 // Dark mode for upgrade paths
 [data-bs-theme="dark"] {
   .section-box-upgradepaths {
-    background-color: #475d6b !important;
+    background-color: #333333 !important;
     color: #f0f3f5 !important;
   }
 }
 
 @media screen and (prefers-color-scheme: dark) {
   .section-box-upgradepaths {
-    background-color: #475d6b !important;
+    background-color: #333333 !important;
     color: #f0f3f5 !important;
   }
 }
@@ -3452,6 +3500,208 @@ section.row:has(.feature-card) .container {
   }
 }
 
+// Downloads modifier - clean styling like Release Schedule
+.section-box-downloads {
+  // Override gradient with solid background
+  background: none !important;
+  padding: 0 !important;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  transition: 0.3s;
+  background-color: rgb(248, 249, 250) !important;
+  overflow: hidden;
+
+  // Remove the gradient pseudo-element
+  &::before {
+    display: none;
+  }
+
+  // No hover transform, just darken shadow like Release Schedule
+  &:hover {
+    transform: none;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  // Content doesn't need z-index override
+  > * {
+    position: relative;
+    z-index: auto;
+  }
+
+  // Blue header styling - full width
+  .section-box-header {
+    color: white;
+    background-color: #0095d5;
+    margin: 0;
+    padding: 1rem 1.5rem;
+    border-radius: 15px 15px 0 0;
+    width: 100%;
+  }
+
+  // Tab bar styling
+  .section-tabs {
+    display: flex;
+    justify-content: center;
+    background-color: var(--accent-color) !important;
+  }
+
+  // Individual tab styling
+  .section-tab {
+    padding: .5rem .5rem;
+    margin: 0 5px;
+    cursor: pointer;
+    pointer-events: auto;
+    position: relative;
+    z-index: 10;
+    background-color: var(--accent-color) !important;
+    color: white !important;
+    font-weight: 600;
+    border: 2px solid transparent !important;
+    box-sizing: border-box;
+  }
+
+  .section-tab.active {
+    background-color: rgb(248, 249, 250) !important;
+    color: #212529 !important;
+    border-top: 2px solid var(--accent-color) !important;
+    border-left: 2px solid var(--accent-color) !important;
+    border-right: 2px solid var(--accent-color) !important;
+    border-bottom: 2px solid transparent !important;
+  }
+
+  // Ensure tab content is visible
+  .major-version-content {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Dark mode overrides for section-box-downloads tabs
+@media screen and (prefers-color-scheme: dark) {
+  .section-box-downloads .section-tabs {
+    background-color: rgb(33, 37, 41) !important;
+  }
+
+  .section-box-downloads .section-tab {
+    background-color: rgb(33, 37, 41) !important;
+    color: white !important;
+  }
+
+  .section-box-downloads .section-tab.active {
+    background-color: #333333 !important;
+    color: white !important;
+    border-top: 2px solid rgb(33, 37, 41) !important;
+    border-left: 2px solid rgb(33, 37, 41) !important;
+    border-right: 2px solid rgb(33, 37, 41) !important;
+  }
+}
+
+:root[color-mode=dark] {
+  .section-box-downloads .section-tabs {
+    background-color: rgb(33, 37, 41) !important;
+  }
+
+  .section-box-downloads .section-tab {
+    background-color: rgb(33, 37, 41) !important;
+    color: white !important;
+  }
+
+  .section-box-downloads .section-tab.active {
+    background-color: #333333 !important;
+    color: white !important;
+    border-top: 2px solid rgb(33, 37, 41) !important;
+    border-left: 2px solid rgb(33, 37, 41) !important;
+    border-right: 2px solid rgb(33, 37, 41) !important;
+  }
+}
+
+[data-bs-theme="dark"] {
+  .section-box-downloads .section-tabs {
+    background-color: rgb(33, 37, 41) !important;
+  }
+
+  .section-box-downloads .section-tab {
+    background-color: rgb(33, 37, 41) !important;
+    color: white !important;
+  }
+
+  .section-box-downloads .section-tab.active {
+    background-color: #333333 !important;
+    color: white !important;
+    border-top: 2px solid rgb(33, 37, 41) !important;
+    border-left: 2px solid rgb(33, 37, 41) !important;
+    border-right: 2px solid rgb(33, 37, 41) !important;
+  }
+}
+
+// Dark mode for downloads boxes
+@media screen and (prefers-color-scheme: dark) {
+  .section-box-downloads {
+    background-color: #333333 !important;
+  }
+}
+
+// Light mode overrides for section-box-downloads tabs
+[data-bs-theme="light"],
+:root:not([data-bs-theme="dark"]) {
+  .section-box-downloads .section-tabs {
+    background-color: var(--accent-color) !important;
+  }
+
+  .section-box-downloads .section-tab {
+    background-color: var(--accent-color) !important;
+    color: var(--body-font-color) !important;
+  }
+
+  .section-box-downloads .section-tab.active {
+    background-color: rgb(248, 249, 250) !important;
+    color: var(--body-font-color) !important;
+    border-top: 2px solid var(--accent-color) !important;
+    border-left: 2px solid var(--accent-color) !important;
+    border-right: 2px solid var(--accent-color) !important;
+  }
+}
+
+@media screen and (prefers-color-scheme: light) {
+  .section-box-downloads .section-tabs {
+    background-color: var(--accent-color) !important;
+  }
+
+  .section-box-downloads .section-tab {
+    background-color: var(--accent-color) !important;
+  }
+
+  .section-box-downloads .section-tab.active {
+    border-top: 2px solid var(--accent-color) !important;
+    border-left: 2px solid var(--accent-color) !important;
+    border-right: 2px solid var(--accent-color) !important;
+  }
+}
+
+@media screen and (prefers-color-scheme: light) {
+  .section-box-downloads {
+    background-color: rgb(248, 249, 250) !important;
+  }
+}
+
+:root[color-mode=dark] {
+  .section-box-downloads {
+    background-color: #333333 !important;
+  }
+}
+
+[data-bs-theme="dark"] {
+  .section-box-downloads {
+    background-color: #333333 !important;
+  }
+}
+
+[data-bs-theme="light"] {
+  .section-box-downloads {
+    background-color: rgb(248, 249, 250) !important;
+  }
+}
+
 // Software status tables - direct table styling without section-box
 .software-status-table {
   width: 100% !important;
@@ -3461,9 +3711,14 @@ section.row:has(.feature-card) .container {
   border-collapse: separate !important;
   border-spacing: 0 !important;
   border-radius: 15px !important;
-  box-shadow: 0px 3px 14.1px 0px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2) !important;
   table-layout: fixed !important;
   display: table !important;
+  transition: 0.3s !important;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+
 
   thead {
     background-color: #0095d5 !important;
@@ -3495,8 +3750,8 @@ section.row:has(.feature-card) .container {
       }
 
       &:first-child {
-        border-top-left-radius: 15px !important;
         width: 18% !important;
+        border-top-left-radius: 15px !important;
       }
 
       &:nth-child(2), &:nth-child(3) {
@@ -3559,7 +3814,7 @@ section.row:has(.feature-card) .container {
   }
 
   tbody {
-    background-color: #1E1E1E;
+    background-color: #2a2a2a;
     color: #f0f3f5;
 
     td {
@@ -3578,7 +3833,7 @@ section.row:has(.feature-card) .container {
   }
 
   tbody {
-    background-color: #1E1E1E;
+    background-color: #2a2a2a;
     color: #f0f3f5;
 
     td {
@@ -3636,6 +3891,31 @@ section.row:has(.feature-card) .container {
 .linkable-tab-content {
   background-color: var(--bs-body-bg, var(--body-background, white)) !important;
   color: var(--bs-body-color, var(--body-font-color, #212529)) !important;
+}
+
+// Enterprise support notice - visible border in both modes
+[data-bs-theme="light"] .enterprise-support-notice {
+  border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+@media screen and (prefers-color-scheme: light) {
+  .enterprise-support-notice {
+    border-color: rgba(0, 0, 0, 0.2) !important;
+  }
+}
+
+[data-bs-theme="dark"] .enterprise-support-notice {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .enterprise-support-notice {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+:root[color-mode=dark] .enterprise-support-notice {
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 // Section tabs styling for release schedule

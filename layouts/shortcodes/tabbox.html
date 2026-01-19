@@ -4,18 +4,21 @@
 {{- $productData := index .Site.Data.properties $name -}}
 {{- with $productData }}
   <div class="gdoc-columns__content gdoc-markdown--nested flex-even">
-    <div class="section-box" id="{{ .id }}" style="padding-top: 0; padding-bottom: 1.5rem; overflow: hidden;">
+    <div class="section-box section-box-downloads" id="{{ .id }}" style="padding-top: 0; padding-bottom: 1.5rem; overflow: hidden;">
       <h2 class="section-box-header">Downloads</h2>
 
       {{- if .majorVersions }}
+        {{- $adjustedDefaultTab := sub $defaultTab 1 -}}
         <div class="section-tabs" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.25rem;">
           {{- range $index, $majorVersion := .majorVersions }}
-            <div class="section-tab {{ $name }}-section-tab" onclick="showMajorVersion('{{ $name }}', {{ $index }})">{{ if $majorVersion.tabLabel }}{{ $majorVersion.tabLabel }}{{ else }}{{ $majorVersion.lifecycle }}{{ end }}</div>
+            {{- $isDefault := eq $index $adjustedDefaultTab -}}
+            <div class="section-tab {{ $name }}-section-tab{{ if $isDefault }} active{{ end }}" onclick="window.showDownloadsVersion(this, '{{ $name }}', {{ $index }}); return false;">{{ if $majorVersion.tabLabel }}{{ $majorVersion.tabLabel }}{{ else }}{{ $majorVersion.lifecycle }}{{ end }}</div>
           {{- end }}
         </div>
 
         {{- range $index, $majorVersion := .majorVersions }}
-          <div class="major-version-content {{ $name }}-major-version-content" id="{{ $name }}-majorVersion{{ $index }}" style="padding-left: 1.5rem; padding-right: 1.5rem; display: {{ if eq $index $defaultTab }}block{{ else }}none{{ end }};">
+          {{- $isDefault := eq $index $adjustedDefaultTab -}}
+          <div class="major-version-content {{ $name }}-major-version-content" id="{{ $name }}-majorVersion{{ $index }}" style="padding-left: 1.5rem; padding-right: 1.5rem; display: {{ if $isDefault }}block{{ else }}none{{ end }};">
             {{- if eq $majorVersion.lifecycle "Archive" }}
               {{- range $majorVersion.majorVersions }}
               {{- if .isDivider }}
@@ -126,28 +129,33 @@
   </style>
 
   <script>
-    if (!window.showMajorVersion) {
-      window.showMajorVersion = function(shortcodeName, majorVersion) {
-      var majorVersionContents = document.querySelectorAll('.' + shortcodeName + '-major-version-content');
-      majorVersionContents.forEach(function(content) {
-        content.style.display = 'none';
-      });
+    if (!window.showDownloadsVersion) {
+      window.showDownloadsVersion = function(clickedTab, shortcodeName, majorVersion) {
+        var sectionBox = clickedTab.closest('.section-box');
 
-      var selectedContent = document.getElementById(shortcodeName + '-majorVersion' + majorVersion);
-      if (selectedContent) {
-        selectedContent.style.display = 'block';
-      }
+        if (sectionBox) {
+          // Hide all content for this shortcode within this section box
+          var majorVersionContents = sectionBox.querySelectorAll('.' + shortcodeName + '-major-version-content');
+          majorVersionContents.forEach(function(content) {
+            content.style.display = 'none';
+          });
 
-      // Set the active class on the clicked tab
-      var tabs = document.querySelectorAll('.' + shortcodeName + '-section-tab');
-      tabs.forEach(function(tab) {
-        tab.classList.remove('active');
-      });
+          // Show selected content within this section box
+          var selectedContent = sectionBox.querySelector('#' + shortcodeName + '-majorVersion' + majorVersion);
+          if (selectedContent) {
+            selectedContent.style.display = 'block';
+            selectedContent.style.setProperty('display', 'block', 'important');
+          }
 
-      var selectedTab = document.querySelector("." + shortcodeName + "-section-tab[onclick*='showMajorVersion'][onclick*='" + shortcodeName + "'][onclick*='" + majorVersion + "']");
-      if (selectedTab) {
-        selectedTab.classList.add('active');
-      }
+          // Update active tab styling within this section box
+          var tabs = sectionBox.querySelectorAll('.' + shortcodeName + '-section-tab');
+          tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+          });
+
+          // Activate the clicked tab
+          clickedTab.classList.add('active');
+        }
       }
     }
 
