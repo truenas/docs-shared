@@ -100,8 +100,8 @@ aside.sidebar-right {
   text-align: left;
   font-size: 17px;
 }
-.truetable tr:hover {background-color: var(--accent-color);}
-.truetable tr:nth-child(even):hover {background-color: var(--accent-color)!important;}
+.truetable tr:hover {background-color: rgba(49, 190, 236, 0.1);}
+.truetable tr:nth-child(even):hover {background-color: rgba(49, 190, 236, 0.1)!important;}
 
 .truetable thead tr:hover {
     background-color: transparent;  /* Remove hover effect from header */
@@ -269,3 +269,159 @@ a.section-box:hover {
 /* Reduce cover block height on home page to minimize white space */
 
 /* Fix home page cover block spacing - remove extra vertical space */
+
+/* Software Status Tables - Gradient Border Card Styling */
+
+/* Base card with gradient border */
+.software-status-card {
+  border-radius: 12px;
+  border: none;
+  position: relative;
+  background: linear-gradient(94.09deg, #198AC8 7.37%, #71BF44 103.99%);
+  padding: 2px;
+  overflow: hidden;
+  box-shadow: 0px 3px 14.1px 0px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+/* Pseudo-element creates inner background (light mode) */
+.software-status-card::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 10px;
+  background: #ffffff;
+  z-index: 0;
+}
+
+/* Dark mode pseudo-element */
+[data-bs-theme="dark"] .software-status-card::before {
+  background: #1E1E1E;
+}
+
+/* Card body styling */
+.software-status-card .card-body {
+  position: relative;
+  z-index: 1;
+  background-color: transparent;
+  padding: 0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* Table within card */
+.software-status-card table.truetable,
+.software-status-card table {
+  margin: 0 !important;
+  border-collapse: collapse;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Override truetable borders */
+.software-status-card .truetable td,
+.software-status-card .truetable th {
+  border: none !important;
+}
+
+/* Table header - gradient background like card header */
+.software-status-card table thead {
+  background: linear-gradient(94.09deg, #198AC8 7.37%, #71BF44 103.99%) !important;
+}
+
+.software-status-card table thead tr {
+  background: transparent !important;
+}
+
+.software-status-card table thead tr:hover {
+  background: transparent !important;
+}
+
+.software-status-card table thead th {
+  color: white !important;
+  padding: 1rem !important;
+  text-align: center;
+  font-weight: bold;
+  border: none !important;
+}
+
+/* First header cell - rounded top-left */
+.software-status-card table thead th:first-child {
+  border-top-left-radius: 10px;
+}
+
+/* Last header cell - rounded top-right */
+.software-status-card table thead th:last-child {
+  border-top-right-radius: 10px;
+}
+
+/* Table body cells */
+.software-status-card table tbody td {
+  padding: 1rem !important;
+  border: none !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* Light mode table body */
+.software-status-card table tbody {
+  background-color: transparent;
+  color: #212529;
+}
+
+/* Dark mode table body */
+[data-bs-theme="dark"] .software-status-card table tbody {
+  color: #ffffff;
+}
+
+/* Row striping for better readability - override truetable */
+.software-status-card .truetable tbody tr:nth-child(even),
+.software-status-card table tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+[data-bs-theme="dark"] .software-status-card .truetable tbody tr:nth-child(even),
+[data-bs-theme="dark"] .software-status-card table tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Hover effect on rows - override truetable */
+.software-status-card .truetable tbody tr:hover,
+.software-status-card table tbody tr:hover {
+  background-color: rgba(0, 149, 213, 0.05) !important;
+}
+
+[data-bs-theme="dark"] .software-status-card .truetable tbody tr:hover,
+[data-bs-theme="dark"] .software-status-card table tbody tr:hover {
+  background-color: rgba(0, 149, 213, 0.1) !important;
+}
+
+/* Links in table */
+.software-status-card table a {
+  color: #0095d5 !important;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.software-status-card table a:hover {
+  color: #198AC8 !important;
+  text-decoration: underline;
+}
+
+[data-bs-theme="dark"] .software-status-card table a {
+  color: #31BEEC !important;
+}
+
+[data-bs-theme="dark"] .software-status-card table a:hover {
+  color: #71BF44 !important;
+}
+
+/* Bottom row corners */
+.software-status-card table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 10px !important;
+}
+
+.software-status-card table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 10px !important;
+}

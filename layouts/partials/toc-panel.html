@@ -324,41 +324,86 @@
       <script>
         document.addEventListener('DOMContentLoaded', function () {
           const tocPanel = document.querySelector('.toc-panel');
-          const header = document.querySelector('#TrueNASHeader');
-          const sitenav = document.querySelector('#sitenav');
-          const footer = document.querySelector('.container.gdoc-footer');
-          const footerPadding = 20;
-        
+
           function getOffsetBottom(el) {
             return el ? el.offsetTop + el.offsetHeight : 0;
           }
-        
+
+          // Clamp TOC panel to stay between navbar and footer
           function clampTocPanel() {
+            if (!tocPanel) return;
+
             const scrollY = window.scrollY || window.pageYOffset;
-            const navHeight = sitenav ? sitenav.offsetHeight : 0;
+
+            // Get navbar height - try multiple selectors for different themes
+            let navHeight = 0;
+            const navbar = document.querySelector('.td-navbar') ||
+                           document.querySelector('#sitenav') ||
+                           document.querySelector('.navbar');
+            if (navbar) {
+              navHeight = navbar.offsetHeight;
+            }
+
             const tocHeight = tocPanel.offsetHeight;
-            const footerTop = footer.getBoundingClientRect().top + window.scrollY - footerPadding;
-        
-            const tocBottom = scrollY + navHeight + tocHeight;
-        
-            if (scrollY > getOffsetBottom(header)) {
+
+            // Get footer position with defensive check
+            const footer = document.querySelector('.td-footer') ||
+                           document.querySelector('.container.gdoc-footer') ||
+                           document.querySelector('footer');
+
+            if (!footer) {
+              // No footer found, just clamp to navbar
+              if (scrollY > 100) {
+                tocPanel.style.position = 'fixed';
+                tocPanel.style.top = (navHeight + 10) + 'px'; // 10px padding
+              } else {
+                tocPanel.style.position = 'absolute';
+                tocPanel.style.top = '';
+              }
+              return;
+            }
+
+            const footerTop = footer.getBoundingClientRect().top + window.scrollY - 20; // 20px padding
+            const tocBottom = scrollY + navHeight + tocHeight + 10; // 10px extra padding
+
+            // Check if we've scrolled past header
+            const header = document.querySelector('#TrueNASHeader') ||
+                           document.querySelector('header') ||
+                           document.querySelector('.td-navbar');
+            const headerHeight = header ? header.offsetHeight : 100;
+
+            if (scrollY > headerHeight) {
               tocPanel.style.position = 'fixed';
-              tocPanel.style.top = navHeight + 'px'; // keep TOC below sticky menu
-        
+              tocPanel.style.top = (navHeight + 10) + 'px'; // Keep TOC below navbar with padding
+
+              // Check if TOC would overlap footer
               if (tocBottom > footerTop) {
                 const overlap = tocBottom - footerTop;
-                tocPanel.style.top = `${navHeight - overlap}px`;
+                tocPanel.style.top = `${navHeight + 10 - overlap}px`;
+
+                // If pushed too far up, hide it completely
+                if ((navHeight + 10 - overlap) < 0) {
+                  tocPanel.style.display = 'none';
+                } else {
+                  tocPanel.style.display = '';
+                }
+              } else {
+                tocPanel.style.display = '';
               }
             } else {
               tocPanel.style.position = 'absolute';
               tocPanel.style.top = '';
+              tocPanel.style.display = '';
             }
           }
-        
-          window.addEventListener('scroll', clampTocPanel);
-          window.addEventListener('resize', clampTocPanel);
-          clampTocPanel();
-        });        
+
+          // Add scroll and resize listeners
+          if (tocPanel) {
+            window.addEventListener('scroll', clampTocPanel);
+            window.addEventListener('resize', clampTocPanel);
+            clampTocPanel(); // Initial call
+          }
+        });
       </script>                  
   </div>
 </nav>

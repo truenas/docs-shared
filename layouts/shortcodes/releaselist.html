@@ -4,18 +4,21 @@
 {{- $productData := index .Site.Data.properties $name -}}
 {{- with $productData }}
   <div class="gdoc-columns__content gdoc-markdown--nested flex-even">
-    <div class="section-box" id="{{ .id }}" style="padding-top: 0; padding-bottom: 1.5rem; overflow: hidden;">
+    <div class="section-box section-box-schedule" id="{{ .id }}">
       <h2 class="section-box-header">Release Schedule</h2>
 
       {{- if .majorVersions }}
+        {{- $adjustedDefaultTab := sub $defaultTab 1 -}}
         <div class="section-tabs" style="background-color: var(--accent-color);">
           {{- range $index, $majorVersion := .majorVersions }}
-            <div class="section-tab {{ $name }}-section-tab" onclick="showMajorVersion('{{ $name }}', {{ $index }})">{{ $majorVersion.lifecycle }}</div>
+            {{- $isDefault := eq $index $adjustedDefaultTab -}}
+            <div class="section-tab {{ $name }}-section-tab{{ if $isDefault }} active{{ end }}" onclick="showReleaseListVersion(this, '{{ $name }}', {{ $index }}); return false;">{{ $majorVersion.lifecycle }}</div>
           {{- end }}
         </div>
 
         {{- range $index, $majorVersion := .majorVersions }}
-          <div class="major-version-content {{ $name }}-major-version-content" id="{{ $name }}-majorVersion{{ $index }}" style="padding-left: 1.5rem; padding-right: 1.5rem; display: {{ if eq $index $defaultTab }}block{{ else }}none{{ end }};">
+          {{- $isDefault := eq $index $adjustedDefaultTab -}}
+          <div class="major-version-content {{ $name }}-major-version-content" id="{{ $name }}-majorVersion{{ $index }}" style="padding-left: 1.5rem; padding-right: 1.5rem; display: {{ if $isDefault }}block{{ else }}none{{ end }};">
             <p><b>{{ $majorVersion.name }}</b></p>
 
             {{- $latestEntries := where $majorVersion.releases "latest" true }}
@@ -99,12 +102,10 @@
   </div>
 
   <script>
-    if (!window.showMajorVersion) {
-      window.showMajorVersion = function(shortcodeName, majorVersion) {
-        // Find the clicked tab to get the right context
-        var clickedTab = event.target;
+    if (!window.showReleaseListVersion) {
+      window.showReleaseListVersion = function(clickedTab, shortcodeName, majorVersion) {
         var sectionBox = clickedTab.closest('.section-box');
-        
+
         if (sectionBox) {
           // Hide all content for this shortcode within this section box
           var majorVersionContents = sectionBox.querySelectorAll('.' + shortcodeName + '-major-version-content');

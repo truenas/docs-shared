@@ -19,7 +19,7 @@ function initializeHugoTabs(sourceId, containerId, defaultTab = null, autoOpen =
 
     const options = {
         urlHashEnabled: true,
-        enableMarkdown: false, // Hugo already processed the content
+        enableMarkdown: true, // Hugo doesn't process markdown inside HTML divs
         collapsible: true,
         autoOpen: autoOpen // Pass the autoOpen parameter
     };
