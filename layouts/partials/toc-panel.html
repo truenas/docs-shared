@@ -1,6 +1,6 @@
 {{ if not .Page.Params.hide_toc }}
-<nav class="toc-panel" style="direction: rtl; text-align: left;">
-  <div class="toc-container" style="direction: ltr; padding: 1em;">
+<nav class="toc-panel" style="direction: rtl; text-align: left; position: relative;">
+  <div class="toc-container" style="direction: ltr; padding: 1em; position: relative;">
     {{ if .Page.Params.use_jump_to_buttons }}
     <b>Jump To:</b>
     <div class="jump-to-buttons" style="margin-top: 10px;">
@@ -324,85 +324,97 @@
       <script>
         document.addEventListener('DOMContentLoaded', function () {
           const tocPanel = document.querySelector('.toc-panel');
+          if (!tocPanel) return;
 
-          function getOffsetBottom(el) {
-            return el ? el.offsetTop + el.offsetHeight : 0;
-          }
+          // Store the initial natural position
+          let initialTocTop = null;
+          let tocHeight = null;
+          let isInitialized = false;
 
-          // Clamp TOC panel to stay between navbar and footer
           function clampTocPanel() {
-            if (!tocPanel) return;
+            // Don't do anything until properly initialized
+            if (!isInitialized) return;
 
             const scrollY = window.scrollY || window.pageYOffset;
 
-            // Get navbar height - try multiple selectors for different themes
-            let navHeight = 0;
-            const navbar = document.querySelector('.td-navbar') ||
-                           document.querySelector('#sitenav') ||
-                           document.querySelector('.navbar');
-            if (navbar) {
-              navHeight = navbar.offsetHeight;
-            }
+            const footer = document.querySelector('.td-footer') || document.querySelector('footer');
 
-            const tocHeight = tocPanel.offsetHeight;
+            // Where would TOC be naturally?
+            const tocNaturalTop = initialTocTop - scrollY;
 
-            // Get footer position with defensive check
-            const footer = document.querySelector('.td-footer') ||
-                           document.querySelector('.container.gdoc-footer') ||
-                           document.querySelector('footer');
+            // Use fixed minimum spacing to account for both TrueNAS header (86px) and navbar (64px)
+            // This avoids timing issues with header detection during initialization
+            const minTop = 150;
 
-            if (!footer) {
-              // No footer found, just clamp to navbar
-              if (scrollY > 100) {
-                tocPanel.style.position = 'fixed';
-                tocPanel.style.top = (navHeight + 10) + 'px'; // 10px padding
-              } else {
-                tocPanel.style.position = 'absolute';
-                tocPanel.style.top = '';
-              }
+            // CASE 1: TOC is naturally below navbar - let it scroll normally
+            if (tocNaturalTop >= minTop) {
+              tocPanel.style.position = '';
+              tocPanel.style.top = '';
+              tocPanel.style.display = '';
               return;
             }
 
-            const footerTop = footer.getBoundingClientRect().top + window.scrollY - 20; // 20px padding
-            const tocBottom = scrollY + navHeight + tocHeight + 10; // 10px extra padding
+            // CASE 2: TOC needs to be fixed - but check if footer is too close
+            if (footer) {
+              const footerRect = footer.getBoundingClientRect();
+              const footerTop = footerRect.top;
+              const tocBottom = minTop + tocHeight;
 
-            // Check if we've scrolled past header
-            const header = document.querySelector('#TrueNASHeader') ||
-                           document.querySelector('header') ||
-                           document.querySelector('.td-navbar');
-            const headerHeight = header ? header.offsetHeight : 100;
-
-            if (scrollY > headerHeight) {
-              tocPanel.style.position = 'fixed';
-              tocPanel.style.top = (navHeight + 10) + 'px'; // Keep TOC below navbar with padding
-
-              // Check if TOC would overlap footer
-              if (tocBottom > footerTop) {
-                const overlap = tocBottom - footerTop;
-                tocPanel.style.top = `${navHeight + 10 - overlap}px`;
-
-                // If pushed too far up, hide it completely
-                if ((navHeight + 10 - overlap) < 0) {
-                  tocPanel.style.display = 'none';
-                } else {
-                  tocPanel.style.display = '';
-                }
-              } else {
-                tocPanel.style.display = '';
+              // Hide when footer is approaching
+              if (tocBottom > footerTop - 100) {
+                tocPanel.style.display = 'none';
+                return;
               }
-            } else {
-              tocPanel.style.position = 'absolute';
-              tocPanel.style.top = '';
-              tocPanel.style.display = '';
             }
+
+            // CASE 3: TOC would be behind navbar - make it fixed below navbar
+            tocPanel.style.position = 'fixed';
+            tocPanel.style.top = minTop + 'px';
+            tocPanel.style.display = '';
           }
 
           // Add scroll and resize listeners
-          if (tocPanel) {
-            window.addEventListener('scroll', clampTocPanel);
-            window.addEventListener('resize', clampTocPanel);
-            clampTocPanel(); // Initial call
+          window.addEventListener('scroll', clampTocPanel);
+          window.addEventListener('resize', function() {
+            // Force recalculation on resize
+            isInitialized = false;
+            initialTocTop = null;
+            tocHeight = null;
+            tocPanel.style.position = '';
+            tocPanel.style.top = '';
+            tocPanel.style.display = '';
+            setTimeout(initialize, 50);
+          });
+
+          // Force clean initial state
+          tocPanel.style.position = '';
+          tocPanel.style.top = '';
+          tocPanel.style.display = '';
+
+          // Initialize position calculation
+          function initialize() {
+            // Ensure we're measuring with everything visible and at natural position
+            tocPanel.style.position = '';
+            tocPanel.style.top = '';
+            tocPanel.style.display = '';
+
+            // Force a layout recalculation
+            void tocPanel.offsetHeight;
+
+            const scrollY = window.scrollY || window.pageYOffset;
+            const rect = tocPanel.getBoundingClientRect();
+            initialTocTop = rect.top + scrollY;
+            tocHeight = tocPanel.offsetHeight;
+
+            // Mark as initialized so clampTocPanel can run
+            isInitialized = true;
+
+            // Now run the positioning logic
+            clampTocPanel();
           }
+
+          // Initialize immediately after a small delay to let headers render
+          setTimeout(initialize, 100);
         });
       </script>                  
   </div>
