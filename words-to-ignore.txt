@@ -1901,7 +1901,7 @@ MiniRSOV
 minirsov
 truenascollection
 FullStencilPack
-SCALEUpgradePaths
+scalupgradepaths
 COREUpgradePaths
 DataMigrationSyncthing
 truenasupgrades

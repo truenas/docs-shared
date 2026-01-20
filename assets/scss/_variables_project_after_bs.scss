@@ -87,12 +87,37 @@ https://www.docsy.dev/docs/adding-content/lookandfeel/#project-style-files
 /* Optional: Docsy alert compatibility for enterprise shortcodes */
 .alert .truenas-enterprise__text .truetable tr {
   background-color: rgba(134, 142, 150, 0.05);
-  
+
   &:hover {
     background-color: #e6e6e6 !important;
   }
-  
+
   &:nth-child(even) {
     background-color: #f3f9fd;
   }
+}
+
+/* Landing page button fixes - Override Bootstrap 5 CSS variables */
+.td-cover-block .btn-primary {
+  --bs-btn-color: #ffffff;
+  --bs-btn-bg: #0095d5;
+  --bs-btn-border-color: #0095d5;
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: #71bf44;
+  --bs-btn-hover-border-color: #71bf44;
+  --bs-btn-active-color: #ffffff;
+  --bs-btn-active-bg: #71bf44;
+  --bs-btn-active-border-color: #71bf44;
+}
+
+.td-cover-block .btn-secondary {
+  --bs-btn-color: #0095d5;
+  --bs-btn-bg: #ffffff;
+  --bs-btn-border-color: #0095d5;
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: #71bf44;
+  --bs-btn-hover-border-color: #71bf44;
+  --bs-btn-active-color: #ffffff;
+  --bs-btn-active-bg: #71bf44;
+  --bs-btn-active-border-color: #71bf44;
 }
