@@ -1734,6 +1734,21 @@ body:not(.td-home) .td-navbar .btn-secondary:hover {
 // Button colors - work in BOTH light and dark modes
 // Primary buttons (Sign Up, Download) - blue with white text → green with white text on hover
 
+// Universal button styles (apply regardless of theme detection)
+.td-home .td-cover-block .btn-primary,
+body.cover-page .td-cover-block .btn-primary,
+.td-cover-block .btn-primary {
+  color: #ffffff !important;
+  background: #0095d5 !important;
+}
+
+.td-home .td-cover-block .btn-secondary,
+body.cover-page .td-cover-block .btn-secondary,
+.td-cover-block .btn-secondary {
+  color: #0095d5 !important;
+  background: #ffffff !important;
+}
+
 // Light mode primary buttons
 [data-bs-theme="light"] .td-home .td-cover-block .btn-primary,
 [data-bs-theme="light"] body.cover-page .td-cover-block .btn-primary,
@@ -1794,6 +1809,37 @@ body:not(.td-home) .td-navbar .btn-secondary:hover {
 [data-bs-theme="dark"] .td-cover-block .btn-secondary:hover {
   color: #ffffff !important;
   background: #71bf44 !important;
+}
+
+// Add @media prefers-color-scheme versions to ensure buttons work in dark mode
+@media screen and (prefers-color-scheme: dark) {
+  .td-home .td-cover-block .btn-primary,
+  body.cover-page .td-cover-block .btn-primary,
+  .td-cover-block .btn-primary {
+    color: #ffffff !important;
+    background: #0095d5 !important;
+  }
+
+  .td-home .td-cover-block .btn-primary:hover,
+  body.cover-page .td-cover-block .btn-primary:hover,
+  .td-cover-block .btn-primary:hover {
+    color: #ffffff !important;
+    background: #71bf44 !important;
+  }
+
+  .td-home .td-cover-block .btn-secondary,
+  body.cover-page .td-cover-block .btn-secondary,
+  .td-cover-block .btn-secondary {
+    color: #0095d5 !important;
+    background: #ffffff !important;
+  }
+
+  .td-home .td-cover-block .btn-secondary:hover,
+  body.cover-page .td-cover-block .btn-secondary:hover,
+  .td-cover-block .btn-secondary:hover {
+    color: #ffffff !important;
+    background: #71bf44 !important;
+  }
 }
 
 // Remove all drop shadows, box shadows, and text shadows in both light and dark modes
