@@ -4113,3 +4113,31 @@ section.row:has(.feature-card) .container {
   padding-right: 0.75rem !important;
   padding-bottom: 0 !important;
 }
+
+// TrueTable styling - use TrueNAS blue for borders
+.truetable table {
+  border-color: #0095d5 !important;
+
+  th, td {
+    border-color: #0095d5 !important;
+  }
+}
+
+// Dark mode
+[data-bs-theme="dark"] .truetable table {
+  border-color: #0095d5 !important;
+
+  th, td {
+    border-color: #0095d5 !important;
+  }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .truetable table {
+    border-color: #0095d5 !important;
+
+    th, td {
+      border-color: #0095d5 !important;
+    }
+  }
+}

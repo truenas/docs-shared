@@ -6,7 +6,7 @@ const LOCAL_TESTING = false; // Change to true for local testing
 const searchConfig = {
   indexes: {
     // TrueNAS Documentation versions
-    // NOTE: Default version is determined dynamically from URL or scale-releases.yaml
+    // NOTE: Default version is determined dynamically from URL or tn-releases.yaml
     'docs-26.04': {
       url: LOCAL_TESTING ? '/pagefind/' : 'https://www.truenas.com/docs/pagefind/',
       name: 'TrueNAS Documentation',
@@ -89,7 +89,7 @@ class MultiSiteSearch {
     this.hasResults = false; // Track if results are currently displayed
     this.isLoadingMore = false; // Track if more results are being loaded
     this.activeSites = []; // Will be initialized after DOM is ready
-    this.currentVersionFromYaml = null; // Will be loaded from scale-releases.yaml
+    this.currentVersionFromYaml = null; // Will be loaded from tn-releases.yaml
 
     // Detect current docs version from URL (synchronous detection)
     this.currentDocsVersion = this.detectCurrentDocsVersionFromUrl();
@@ -150,9 +150,9 @@ class MultiSiteSearch {
 
   async fetchCurrentVersionFromYaml() {
     try {
-      const response = await fetch('/data/properties/scale-releases.yaml');
+      const response = await fetch('/data/properties/tn-releases.yaml');
       if (!response.ok) {
-        throw new Error('Failed to fetch scale-releases.yaml');
+        throw new Error('Failed to fetch tn-releases.yaml');
       }
 
       const yamlText = await response.text();
