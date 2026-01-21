@@ -3,10 +3,16 @@
   <div>
     <h1 style="font-weight: 1000; text-align: center;">404</h1>
 
-    <img src="{{ "/images/connect-logo-full-color-horizontal.svg" | relURL }}" alt="TrueNAS Connect" style="max-width: 300px; padding: inherit; margin:auto; width: 200px; display: block;">
+    {{/* Use site's navbar_logo_404 parameter for the logo */}}
+    {{ with site.Params.ui.navbar_logo_404 }}
+      {{ $logo := readFile (printf "static/%s" .) }}
+      <div style="max-width: 300px; padding: inherit; margin:auto; width: 200px; display: block;">
+        {{ $logo | safeHTML }}
+      </div>
+    {{ end }}
     <div style="padding-top: 4em; padding-left: 8em; padding-right: 8em;">
     <h2>Lost?</h2>
-    <p>The content you are looking for might no longer exist. Use the navigation tools above to browse the TrueNAS Connect documentation or return to the <a href="{{ "" | relURL }}">TrueNAS Connect home page</a>.</p>
+    <p>The content you are looking for might no longer exist. Use the navigation tools above to browse the documentation or return to the <a href="{{ "" | relURL }}">{{ site.Title }} home page</a>.</p>
     </div>
   </div>
 </div>
