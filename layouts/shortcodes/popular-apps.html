@@ -44,13 +44,13 @@
         {{ $dateAdded = index $data "app_metadata" "date_added" | default "" }}
         {{ break }}
       {{ end }}
+
+      <!-- Normalize app name for telemetry matching -->
+      {{ $normalizedAppName := lower $name }}
+
+      <!-- Add to telemetry-based apps (only if app exists locally) -->
+      {{ $telemetryApps = $telemetryApps | append (dict "name" $normalizedAppName "count" $count "train" $train "date_added" $dateAdded "title" $appTitle "description" $appDescription "icon" $appIcon) }}
     {{ end }}
-
-    <!-- Normalize app name for telemetry matching -->
-    {{ $normalizedAppName := lower $name }}
-
-    <!-- Add to telemetry-based apps -->
-    {{ $telemetryApps = $telemetryApps | append (dict "name" $normalizedAppName "count" $count "train" $train "date_added" $dateAdded "title" $appTitle "description" $appDescription "icon" $appIcon) }}
   {{ end }}
 {{ end }}
 
