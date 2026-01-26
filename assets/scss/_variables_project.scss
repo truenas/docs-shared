@@ -2694,6 +2694,28 @@ section.row:has(.feature-card) .container {
 }
 
 
+// Responsive font-size for feature card titles - scales continuously with viewport
+// Desktop: scales from ~1.7rem at 1920px down to ~1.3rem at 992px
+@media (min-width: 992px) {
+  .feature-card h4 {
+    font-size: calc(0.9rem + 0.42vw) !important;
+  }
+}
+
+// Tablet: scales from ~1.5rem at 991px down to ~1.25rem at 768px
+@media (max-width: 991px) and (min-width: 768px) {
+  .feature-card h4 {
+    font-size: calc(0.85rem + 0.65vw) !important;
+  }
+}
+
+// Mobile: fixed size for single column
+@media (max-width: 767px) {
+  .feature-card h4 {
+    font-size: 1.35rem !important;
+  }
+}
+
 // Override Bootstrap margin classes for vertical spacing between rows
 .feature-card.mb-5,
 .feature-card.mb-lg-0 {
