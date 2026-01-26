@@ -1,0 +1,4 @@
+{{/* Generate print section button if page is a section with print output format */}}
+{{ if and .IsSection (.OutputFormats.Get "print") }}
+<a id="print" href="{{ .RelPermalink }}printview/"><i class="fa-solid fa-print fa-fw"></i> Print entire section</a>
+{{ end }}

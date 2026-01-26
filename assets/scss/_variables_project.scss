@@ -9,20 +9,22 @@ $enable-shadows: true !default;
 // TODO: consider moving all of these theme-color definitions into the User
 // Guide SCSS, or declare theme here, but namespaced:
 
-$primary: #0095d5 !default;
-$secondary: #71BF44 !default;
-$success: #31BEEC !default;
-$info: #AEADAE !default;
-$warning: #ed6a5a !default;
-$danger: #ed6a5a !default;
-$light: #282828 !default; // TODO: consider using BS value
-$dark: #1E1E1E !default;  // TODO: consider using BS value
+$primary: #0095d5;
+$secondary: #71BF44;
+$success: #31BEEC;
+$info: #AEADAE;
+$warning: #ed6a5a;
+$danger: #ed6a5a;
+$light: #282828; // TODO: consider using BS value
+$dark: #1E1E1E;  // TODO: consider using BS value
 
-$code-color: shade-color($secondary, 40%) !default;
+$code-color: shade-color($secondary, 40%);
 
 :root,
 [data-bs-theme="light"] {
   --td-pre-bg: var(--bs-tertiary-bg);
+  --bs-primary: #0095d5 !important;
+  --bs-primary-rgb: 0, 149, 213 !important;
   --bs-link-color: #0095d5 !important;
   --bs-link-color-rgb: 0, 149, 213 !important;
   --bs-link-hover-color: #31BEEC !important;
@@ -35,6 +37,8 @@ $code-color: shade-color($secondary, 40%) !default;
 [data-bs-theme="dark"] {
   --bs-body-bg: #282828 !important;
   --bs-body-bg-rgb: 40, 40, 40 !important;
+  --bs-primary: #0095d5 !important;
+  --bs-primary-rgb: 0, 149, 213 !important;
   --bs-link-color: #0095d5 !important;
   --bs-link-color-rgb: 0, 149, 213 !important;
   --bs-link-hover-color: #31BEEC !important;
@@ -110,6 +114,8 @@ $list-inline-padding: $spacer;
 
 .td-navbar .navbar-brand__name {
   display: none;
+  margin-bottom: 0;
+  line-height: 1;
 }
 
 // Logo container with stacked logos for wipe effect
@@ -118,6 +124,7 @@ $list-inline-padding: $spacer;
   display: inline-flex;
   align-items: center;
   line-height: 0;
+  margin-bottom: 0;
 }
 
 // Fix alignment specifically for homepage navbar - pill mode only
@@ -140,6 +147,7 @@ $list-inline-padding: $spacer;
   height: auto;
   width: auto;
   max-height: 36px; /* Default desktop size */
+  margin-bottom: 0;
 }
 
 /* Responsive logo sizing */
@@ -833,6 +841,7 @@ body:not(.td-home) .td-navbar {
 
 body:not(.td-home) .td-navbar .container-fluid {
   display: flex !important;
+  flex-direction: row !important;
   align-items: center !important;
 }
 
@@ -842,6 +851,25 @@ body:not(.td-home) .td-navbar .navbar-brand {
   margin-bottom: 0 !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
+  align-self: center !important;
+}
+
+body:not(.td-home) .td-navbar .navbar-brand__logo {
+  display: flex !important;
+  align-items: center !important;
+}
+
+body:not(.td-home) .td-navbar .navbar-logo-container {
+  align-self: center !important;
+  margin-top: 0 !important;
+}
+
+// Fix logo alignment on docs pages - white/black logos shouldn't affect positioning
+body:not(.td-home) .td-navbar .navbar-logo-white,
+body:not(.td-home) .td-navbar .navbar-logo-black {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
 }
 
 body:not(.td-home) .td-navbar .navbar-nav {
@@ -2971,6 +2999,9 @@ section.row:has(.feature-card) .container {
   right: 0;
   margin: 0;
   z-index: 10;
+  transform: translateZ(0); // Force GPU rendering for crisp text
+  -webkit-font-smoothing: antialiased; // Improve font rendering clarity
+  -moz-osx-font-smoothing: grayscale; // Improve font rendering on Firefox/Mac
 }
 
 // Responsive: reduce padding on mobile
@@ -4160,4 +4191,32 @@ section.row:has(.feature-card) .container {
       border-color: #0095d5 !important;
     }
   }
+}
+
+// Table of Contents active link styling
+// Use TrueNAS blue for active TOC links in both light and dark modes
+.td-toc #TableOfContents a.active {
+  color: #0095d5 !important;
+  border-left-color: #0095d5 !important;
+}
+
+// Ensure consistent styling across all theme modes
+[data-bs-theme="dark"] .td-toc #TableOfContents a.active {
+  color: #0095d5 !important;
+  border-left-color: #0095d5 !important;
+}
+
+[data-bs-theme="light"] .td-toc #TableOfContents a.active {
+  color: #0095d5 !important;
+  border-left-color: #0095d5 !important;
+}
+
+:root[color-mode=dark] .td-toc #TableOfContents a.active {
+  color: #0095d5 !important;
+  border-left-color: #0095d5 !important;
+}
+
+:root[color-mode=light] .td-toc #TableOfContents a.active {
+  color: #0095d5 !important;
+  border-left-color: #0095d5 !important;
 }

@@ -3,6 +3,12 @@
 {{- $title := .Get "title" | default "" -}}
 {{- $content := .Inner | strings.TrimSpace -}}
 
+{{- /* Replace blank lines with <br><br> to prevent nesting issues */ -}}
+{{- /* Handle various patterns of blank lines */ -}}
+{{- $content = replace $content "\n\n\n" "<br><br>" -}}
+{{- $content = replace $content "\n\n" "<br><br>" -}}
+{{- $content = replace $content "\r\n\r\n" "<br><br>" -}}
+
 {{- $type = upper $type | printf "[!%s]" -}}
 
 {{- $markdown := printf "> %s" $type -}}
