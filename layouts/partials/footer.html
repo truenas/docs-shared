@@ -1,5 +1,5 @@
 <!-- TrueNAS Legacy Footer -->
-<!-- Check if we were passed the ?showsearch=true and need to display docsbot-->
+<!-- Check if we were passed the ?showsearch=true and need to open AI search modal-->
 <script defer>
     // Function to get the value of a query parameter by name
     function getSearchQueryParam(param) {
@@ -7,18 +7,20 @@
         return urlParams.get(param);
     }
 
-    // Event listener after DocsBot Init
+    // Event listener to open AI search modal if showsearch=true
     document.addEventListener('DOMContentLoaded', function() {
       const paramValue = getSearchQueryParam('showsearch');
       if (paramValue) {
         setTimeout(function() {
-            // Find the button element
-            var aibutton = document.getElementById("chatbot-button-icon");
-
-            // Check if the button exists
-            if (aibutton) {
-              // Simulate a click on the button
-              aibutton.click();
+            // Try to open AI search via DocsBotAI
+            if (window.DocsBotAI && window.DocsBotAI.open) {
+              window.DocsBotAI.open();
+            } else {
+              // Fallback: click the AI search trigger button
+              var aiButton = document.getElementById("ai-search-trigger");
+              if (aiButton) {
+                aiButton.click();
+              }
             }
         }, 1000);
       }

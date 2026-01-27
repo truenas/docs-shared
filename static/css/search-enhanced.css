@@ -1106,7 +1106,6 @@ body.td-sidebar .td-navbar .enhanced-search-btn:hover {
   height: 16px;
   margin: 0;
   accent-color: #0095d5;
-  color-scheme: light;
 }
 
 .version-filter-container {
@@ -1218,13 +1217,13 @@ body.td-sidebar .td-navbar .enhanced-search-btn:hover {
 }
 
 [data-bs-theme="dark"] .filter-header {
-  color: var(--bs-light, #f8f9fa);
+  color: #e9ecef;
 }
 
 [data-bs-theme="dark"] .version-filter-label,
 [data-bs-theme="dark"] .docs-version-menu {
   background: var(--bs-dark, #212529);
-  color: var(--bs-light, #f8f9fa);
+  color: #e9ecef;
   border-color: var(--bs-gray-600, #6c757d);
 }
 
@@ -1237,5 +1236,21 @@ body.td-sidebar .td-navbar .enhanced-search-btn:hover {
 }
 
 [data-bs-theme="dark"] .filter-checkbox {
-  color: var(--bs-light, #f8f9fa);
+  color: #e9ecef;
+}
+
+[data-bs-theme="dark"] .filter-checkbox span {
+  color: #e9ecef;
+}
+
+[data-bs-theme="dark"] .filter-checkbox input[type="checkbox"] {
+  color-scheme: dark;
+}
+
+[data-bs-theme="dark"] .version-filter-label span {
+  color: #e9ecef;
+}
+
+[data-bs-theme="dark"] .docs-version-menu label {
+  color: #e9ecef;
 }
