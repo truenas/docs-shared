@@ -1,13 +1,7 @@
 {{- /* Support named parameters (preferred) and positional (legacy) */ -}}
 {{- $type := .Get "type" | default (.Get 0) | default "note" -}}
 {{- $title := .Get "title" | default "" -}}
-{{- $content := .Inner | strings.TrimSpace -}}
-
-{{- /* Replace blank lines with <br><br> to prevent nesting issues */ -}}
-{{- /* Handle various patterns of blank lines */ -}}
-{{- $content = replace $content "\n\n\n" "<br><br>" -}}
-{{- $content = replace $content "\n\n" "<br><br>" -}}
-{{- $content = replace $content "\r\n\r\n" "<br><br>" -}}
+{{- $content := .Inner -}}
 
 {{- $type = upper $type | printf "[!%s]" -}}
 
@@ -16,9 +10,13 @@
   {{- $markdown = printf "> %s %s" $type $title -}}
 {{- end -}}
 
-{{- /* Add each line of content as a blockquote line */ -}}
+{{- /* Add each line of content as a blockquote line, preserving blank lines */ -}}
 {{- range split $content "\n" -}}
-  {{- $markdown = printf "%s\n> %s" $markdown . -}}
+  {{- if eq (strings.TrimSpace .) "" -}}
+    {{- $markdown = printf "%s\n>" $markdown -}}
+  {{- else -}}
+    {{- $markdown = printf "%s\n> %s" $markdown . -}}
+  {{- end -}}
 {{- end -}}
 
 {{ .Page.RenderString $markdown }}
