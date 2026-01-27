@@ -410,9 +410,9 @@
 }
 
 .enhanced-search-btn {
-  background: white;
-  color: #0095d5;
-  border: 1px solid white;
+  background: transparent;
+  color: white;
+  border: 1px solid #0095d5;
   padding: 8px 12px;
   display: flex;
   align-items: center;
@@ -426,6 +426,13 @@
   position: relative;
   overflow: hidden;
   z-index: 1;
+}
+
+/* White buttons with blue text on regular docs pages (not home, not cover blocks) */
+body:not(.td-home):not(.td-overlay):not([class*="cover"]) .enhanced-search-btn {
+  background: white;
+  color: #0095d5;
+  border: 1px solid white;
 }
 
 .enhanced-search-left {
@@ -443,9 +450,14 @@
   left: -2px;
   right: -2px;
   bottom: -2px;
-  background: white;
+  background: #0095d5;
   z-index: -2;
   border-radius: inherit;
+}
+
+/* White background for docs pages */
+body:not(.td-home):not(.td-overlay):not([class*="cover"]) .enhanced-search-btn::after {
+  background: white;
 }
 
 .enhanced-search-btn::before {

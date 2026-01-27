@@ -865,14 +865,15 @@ body:not(.td-home) .td-navbar .navbar-logo-container {
 }
 
 // Fix logo alignment on docs pages - white/black logos shouldn't affect positioning
-body:not(.td-home) .td-navbar .navbar-logo-white,
-body:not(.td-home) .td-navbar .navbar-logo-black {
+// Only apply to pages with sidebar (regular docs pages), not landing pages with cover blocks
+body:has(.td-sidebar) .td-navbar .navbar-logo-white,
+body:has(.td-sidebar) .td-navbar .navbar-logo-black {
   position: relative !important;
   top: auto !important;
   left: auto !important;
 }
 
-body:not(.td-home) .td-navbar .navbar-nav {
+body:has(.td-sidebar) .td-navbar .navbar-nav {
   align-items: center !important;
 }
 
