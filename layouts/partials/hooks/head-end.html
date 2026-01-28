@@ -1968,21 +1968,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Force dark background on pages with cover images -->
+<!-- Apply theme-aware background on pages with cover images -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // If page has cover image, force dark background but preserve navbar scroll behavior
+  // If page has cover image, add cover-page class but don't force colors
   if (document.querySelector('.blocks-cover, .td-cover-block')) {
     document.body.classList.add('cover-page');
     document.documentElement.classList.add('cover-page');
 
-    // Only force page background, don't interfere with navbar
-    document.body.style.setProperty('background-color', '#282828', 'important');
-    document.body.style.setProperty('color', 'white', 'important');
-
-    // Override Bootstrap CSS custom properties for page background only
-    document.documentElement.style.setProperty('--bs-body-bg', '#282828', 'important');
-    document.documentElement.style.setProperty('--bs-body-color', '#ffffff', 'important');
+    // Let CSS handle the styling based on [data-bs-theme] attribute
+    // The inline styles have been removed to respect theme switching
   }
 
   // Add navbar toggle for home page only

@@ -1,0 +1,42 @@
+// Ad Banner Styling - Theme-aware container for Revive Adserver
+.ad-banner-container {
+  text-align: center;
+  margin: 20px auto;
+  max-width: 1067px;
+
+  // Default light background
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+
+  // Ensure the ad content inside is visible in both themes
+  ins {
+    display: block;
+    background: inherit !important;
+    background-color: inherit !important;
+  }
+}
+
+// Target when body has cover-page class - override body inline styles
+body.cover-page .ad-banner-container,
+body.td-page .ad-banner-container,
+body.td-page.cover-page .ad-banner-container {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+// Light theme - explicit white background
+:root .ad-banner-container,
+[data-bs-theme="light"] .ad-banner-container,
+[data-bs-theme="light"] body.cover-page .ad-banner-container,
+[data-bs-theme="light"] body.td-page .ad-banner-container {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+// Dark theme - explicit dark background to match page
+[data-bs-theme="dark"] .ad-banner-container,
+[data-bs-theme="dark"] body.cover-page .ad-banner-container,
+[data-bs-theme="dark"] body.td-page .ad-banner-container {
+  background: #282828 !important;
+  background-color: #282828 !important;
+}
