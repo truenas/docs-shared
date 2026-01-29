@@ -1,0 +1,63 @@
+# Pagefind Search Index Configuration Template
+# Copy this file to the root of your Hugo site as: pagefind.yml
+#
+# This template is provided by the docs-shared module for TrueNAS documentation sites.
+# It configures Pagefind to generate a search index for static sites.
+#
+# Usage:
+#   1. Copy this file to your site root: cp pagefind.template.yml ../pagefind.yml
+#   2. Adjust paths and selectors if needed for your site
+#   3. Run: npx pagefind --site public
+#
+# Documentation: https://pagefind.app/docs/config-options/
+
+# Directory containing the built HTML files
+site: public
+
+# Where to output the search index files
+output_path: public/pagefind
+
+# Exclude common non-content elements from indexing
+exclude_selectors:
+  # Navigation elements
+  - 'nav'
+  - '.gdoc-nav'
+  - '.gdoc-nav--main'
+  - '.gdoc-nav--more'
+  - '.gdoc-nav--tags'
+
+  # Footer elements
+  - 'footer'
+  - '.gdoc-footer'
+  - '.gdoc-page__footer'
+
+  # Header elements
+  - 'header'
+  - '.gdoc-page__header'
+
+  # Search elements (avoid indexing the search UI itself)
+  - '.gdoc-search'
+  - '#search-modal'
+  - '.search-modal'
+
+  # Other common elements to exclude
+  - '[data-pagefind-ignore]'  # Manually marked elements
+  - '.no-search'              # Custom class for excluded content
+
+# Keep the full URL in search results (important for cross-site search)
+keep_index_url: true
+
+# Enable verbose output during index generation (helpful for debugging)
+verbose: true
+
+# Force language detection (optional - adjust if your site uses a different language)
+# force_language: "en"
+
+# ============================================================================
+# Site-Specific Exclusions
+# ============================================================================
+# Add any additional selectors specific to your site below.
+# Examples:
+#   - '.site-specific-class'
+#   - '#sidebar'
+#   - '.advertisement'
