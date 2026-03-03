@@ -28,10 +28,56 @@ This section details what shared resources are available in the `docs-shared` mo
 - Shared build and cleanup scripts from apps-web
 - Python scripts for app documentation generation
 
+#### `/docs-shared/pagefind.template.yml`
+- **Pagefind search configuration template** for static site search
+  - Pre-configured exclusions for GeekDoc theme elements
+  - Ready to copy to any site's root directory
+  - Enables participation in multi-site search
+  - See `PAGEFIND_SETUP.md` for complete setup instructions
+
+#### `/docs-shared/PAGEFIND_SETUP.md`
+- **Complete setup guide** for enabling Pagefind search indexing
+  - Step-by-step configuration instructions
+  - Build automation examples (CI/CD, scripts)
+  - Troubleshooting guide
+  - Multi-site search integration notes
+
 #### Other Directories
 - `/docs-shared/assets/` - Empty (reserved for future shared assets)
 - `/docs-shared/data/` - Empty (reserved for future shared data files)
 - `/docs-shared/go.mod` - Hugo module configuration
+
+### Search Index Configuration (Pagefind)
+
+The `docs-shared` module automatically configures your site for Pagefind search indexing. The `layouts/_default/single.html` template includes `data-pagefind-body` and metadata attributes that enable your content to be searchable.
+
+**What's automatic:**
+- ✅ Content pages marked for indexing
+- ✅ Site metadata injection (from `config.toml`)
+- ✅ Template attributes for search engine
+
+**What each site needs to add:**
+
+1. **Add to `config.toml`:**
+```toml
+[params.search]
+  siteName = "Your Site Name"
+  siteKey = "unique-key"
+  siteIcon = "/path/to/icon.png"
+  sitePriority = 1
+```
+
+2. **Copy pagefind config:**
+```bash
+cp docs-shared/pagefind.template.yml pagefind.yml
+```
+
+3. **Build with search:**
+```bash
+hugo && npx pagefind --site public
+```
+
+**See `PAGEFIND_SETUP.md` for complete documentation.**
 
 ## Site-Specific Local Overrides
 
