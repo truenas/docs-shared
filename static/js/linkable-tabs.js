@@ -161,7 +161,7 @@ class LinkableTabBox {
                     flex-wrap: wrap;
                     gap: 4px;
                 }
-                
+
                 .linkable-tab-button {
                     padding: 12px 18px;
                     font-size: 13px;
@@ -170,13 +170,13 @@ class LinkableTabBox {
                     border-radius: 8px !important;
                     margin-bottom: 4px;
                 }
-                
+
                 .linkable-tabs-wrapper .linkable-tab-button.first-tab,
                 .linkable-tabs-wrapper .linkable-tab-button.last-tab {
                     border-radius: 8px !important;
                 }
             }
-            
+
             /* Responsive design */
             @media (max-width: 768px) {
                 .linkable-tabs-nav {
