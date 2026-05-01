@@ -23,7 +23,9 @@
     {{ end }}
 
     <!-- Define the local file path for the app -->
-    {{ $localFilePath := printf "%s/%s/%s/app_versions.json" $localBaseDir (lower $train) $name }}
+    <!-- Sanitize name to strip characters invalid in Windows file paths (e.g. stray quotes from telemetry data) -->
+    {{ $safeName := replaceRE `[^a-zA-Z0-9._\-]` "" $name }}
+    {{ $localFilePath := printf "%s/%s/%s/app_versions.json" $localBaseDir (lower $train) $safeName }}
 
     <!-- Initialize app metadata -->
     {{ $appTitle := "" }}
