@@ -11,12 +11,15 @@
         {{- $adjustedDefaultTab := sub $defaultTab 1 -}}
         <div class="section-tabs" style="background-color: var(--accent-color);">
           {{- range $index, $majorVersion := .majorVersions }}
-            {{- $isDefault := eq $index $adjustedDefaultTab -}}
-            <div class="section-tab {{ $name }}-section-tab{{ if $isDefault }} active{{ end }}" onclick="showReleaseListVersion(this, '{{ $name }}', {{ $index }}); return false;">{{ $majorVersion.lifecycle }}</div>
+            {{- if ne $majorVersion.state "archived" }}
+              {{- $isDefault := eq $index $adjustedDefaultTab -}}
+              <div class="section-tab {{ $name }}-section-tab{{ if $isDefault }} active{{ end }}" onclick="showReleaseListVersion(this, '{{ $name }}', {{ $index }}); return false;">{{ $majorVersion.lifecycle }}</div>
+            {{- end }}
           {{- end }}
         </div>
 
         {{- range $index, $majorVersion := .majorVersions }}
+          {{- if ne $majorVersion.state "archived" }}
           {{- $isDefault := eq $index $adjustedDefaultTab -}}
           <div class="major-version-content {{ $name }}-major-version-content" id="{{ $name }}-majorVersion{{ $index }}" style="padding-left: 1.5rem; padding-right: 1.5rem; display: {{ if $isDefault }}block{{ else }}none{{ end }};">
             <p><b>{{ $majorVersion.name }}</b></p>
@@ -96,6 +99,7 @@
               {{- end }}
             {{- end }}
           </div>
+          {{- end }}
         {{- end }}
       {{- end }}
     </div>
