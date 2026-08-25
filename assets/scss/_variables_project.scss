@@ -793,6 +793,22 @@ body:not(.td-home) .td-navbar {
   stroke: #0095d5 !important;
 }
 
+// Light mode dropdown themed icons for docs pages (Home, TrueNAS Connect).
+// Without this, the unconditional dark-mode .dropdown-icon-themed filter
+// rule above still wins on docs pages (the <nav> always carries
+// data-bs-theme="dark" itself, which that rule matches regardless of the
+// site-wide light/dark toggle), leaving these icons white-on-white.
+[data-bs-theme="light"] .td-page:not(.cover-page) .navbar-docs-hub .dropdown-menu .dropdown-icon-themed,
+[data-bs-theme="light"] .td-section:not(.cover-page) .navbar-docs-hub .dropdown-menu .dropdown-icon-themed {
+  filter: brightness(0) saturate(100%) invert(13%) sepia(4%) saturate(0%) hue-rotate(222deg) brightness(95%) contrast(90%) !important;
+}
+
+[data-bs-theme="light"] .td-page:not(.cover-page) .navbar-docs-hub .dropdown-menu .dropdown-icon-themed svg,
+[data-bs-theme="light"] .td-section:not(.cover-page) .navbar-docs-hub .dropdown-menu .dropdown-icon-themed svg {
+  fill: #212529 !important;
+  stroke: #212529 !important;
+}
+
 // Light mode dropdown PNG icons for docs pages
 [data-bs-theme="light"] .td-page:not(.cover-page) .td-navbar .dropdown-menu img,
 [data-bs-theme="light"] .td-section:not(.cover-page) .td-navbar .dropdown-menu img {
