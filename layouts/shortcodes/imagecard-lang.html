@@ -47,11 +47,11 @@
         class="language-dropdown"
         onchange="event.preventDefault(); event.stopPropagation(); window.open(this.value, '_blank');"
         onclick="event.preventDefault(); event.stopPropagation();"
-        style="padding: 0.25rem 0.5rem; border-radius: 4px; min-width: 200px; cursor: pointer; background-color: var(--body-background); color: var(--body-font-color); border: 1px solid var(--accent-color);">
-        <option value="" disabled selected>Select a language...</option>
+        style="padding: 0.25rem 0.5rem; border-radius: 4px; min-width: 200px; cursor: pointer; background-color: #ffffff; color: #212529; border: 1px solid var(--accent-color);">
+        <option value="" disabled selected style="background-color: #ffffff; color: #212529;">Select a language...</option>
         {{ range $languages }}
           {{ $langLink := printf "%s-%s.pdf" $baseLinkNoExt .code }}
-          <option value="{{ $langLink }}">{{ .name }} ({{ .code }})</option>
+          <option value="{{ $langLink }}" style="background-color: #ffffff; color: #212529;">{{ .name }} ({{ .code }})</option>
         {{ end }}
       </select>
     </div>

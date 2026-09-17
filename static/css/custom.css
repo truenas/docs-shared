@@ -216,18 +216,37 @@ a.section-box:hover {
 }
 .prodintro-btn {
 	display: inline-block;
+	position: relative;
+	overflow: hidden;
+	z-index: 1;
 	margin-top: 1rem;
 	padding: 0.6rem 1.4rem;
 	background-color: #0095d5;
+	border: 1px solid #0095d5;
 	color: #ffffff !important;
 	border-radius: 2rem;
 	font-weight: 600;
 	font-size: 0.9rem;
 	text-decoration: none !important;
-	transition: background-color 0.2s ease;
+	transition: border-color 0.25s ease;
+}
+.prodintro-btn::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -10%;
+	width: 0;
+	height: 100%;
+	background: #71bf44;
+	transition: width 0.25s ease;
+	transform: skewX(-10deg);
+	z-index: -1;
+}
+.prodintro-btn:hover::before {
+	width: 120%;
 }
 .prodintro-btn:hover {
-	background-color: #007ab5;
+	border-color: #71bf44;
 	color: #ffffff !important;
 }
 /* End adjust section-box for TrueNAS Systems page cards */

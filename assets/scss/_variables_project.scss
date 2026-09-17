@@ -4154,19 +4154,19 @@ section.row:has(.feature-card) .container {
 
 // Card image styling
 .box-image {
-  padding: 0.5rem 1rem 0.5rem 1rem;
+  padding: 1.5rem 1.5rem 0.75rem 1.5rem;
   text-align: center;
 }
 
 .prod-card-img {
-  width: 80px;
+  width: 96px;
   height: auto !important;
   object-fit: contain;
 }
 
 // Card content styling
 .section-tab-content {
-  padding-top: 0.25rem;
+  padding-top: 0.5rem;
   text-align: center;
 
   .doctype-label {
@@ -4177,9 +4177,9 @@ section.row:has(.feature-card) .container {
 }
 
 .ixprods {
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-  padding-bottom: 0 !important;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+  padding-bottom: 1.25rem !important;
 }
 
 // TrueTable styling - use TrueNAS blue for borders
