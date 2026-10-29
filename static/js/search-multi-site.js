@@ -7,13 +7,22 @@ const searchConfig = {
   indexes: {
     // TrueNAS Documentation versions
     // NOTE: Default version is determined dynamically from URL or tn-releases.yaml
-    'docs-26': {
-      url: LOCAL_TESTING ? '/pagefind/' : 'https://www.truenas.com/docs/pagefind/',
+    'docs-28': {
+      url: LOCAL_TESTING ? '/nightly/pagefind/' : 'https://www.truenas.com/docs/nightly/pagefind/',
       name: 'TrueNAS Documentation',
-      displayName: 'TrueNAS 26 Nightly',
-      version: '26 Nightly',
+      displayName: 'TrueNAS 28 Nightly',
+      version: '28 Nightly',
       icon: LOCAL_TESTING ? '/favicon/TN-favicon-32x32.png' : 'https://www.truenas.com/docs/favicon/TN-favicon-32x32.png',
       priority: 1,
+      group: 'docs'
+    },
+    'docs-27': {
+      url: 'https://www.truenas.com/docs/scale/27/pagefind/',
+      name: 'TrueNAS Documentation',
+      displayName: 'TrueNAS 27',
+      version: '27',
+      icon: 'https://www.truenas.com/docs/favicon/TN-favicon-32x32.png',
+      priority: 2,
       group: 'docs'
     },
     'docs-25.10': {
@@ -22,7 +31,7 @@ const searchConfig = {
       displayName: 'TrueNAS 25.10',
       version: '25.10',
       icon: 'https://www.truenas.com/docs/favicon/TN-favicon-32x32.png',
-      priority: 2,
+      priority: 3,
       group: 'docs'
     },
     'docs-25.04': {
@@ -31,7 +40,7 @@ const searchConfig = {
       displayName: 'TrueNAS 25.04',
       version: '25.04',
       icon: 'https://www.truenas.com/docs/favicon/TN-favicon-32x32.png',
-      priority: 3,
+      priority: 4,
       group: 'docs'
     },
     'docs-24.10': {
@@ -40,8 +49,18 @@ const searchConfig = {
       displayName: 'TrueNAS 24.10',
       version: '24.10',
       icon: 'https://www.truenas.com/docs/favicon/TN-favicon-32x32.png',
-      priority: 4,
+      priority: 5,
       group: 'docs'
+    },
+    // Documentation hub (non-versioned content: Contributing, References, Solutions,
+    // Hardware, Software Status, archive). Always searched when Docs is on; not a version.
+    'docs-hub': {
+      url: LOCAL_TESTING ? '/pagefind/' : 'https://www.truenas.com/docs/pagefind/',
+      name: 'TrueNAS Documentation',
+      displayName: 'Documentation Hub',
+      icon: LOCAL_TESTING ? '/favicon/TN-favicon-32x32.png' : 'https://www.truenas.com/docs/favicon/TN-favicon-32x32.png',
+      priority: 6,
+      group: 'hub'
     },
     // Other sites (non-expandable)
     apps: {
@@ -60,14 +79,15 @@ const searchConfig = {
       priority: 11,
       group: 'other'
     },
-    security: {
-      url: 'https://security.truenas.com/pagefind/',
-      name: 'Security Advisories',
-      displayName: 'Security Advisories',
-      iconSvg: '<svg style="width: 20px; height: 20px; stroke-width: 0.5;" viewBox="0 0 24 24"><path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,21C7.59,21 4,17.41 4,13V6.31L12,3.11L20,6.31V13C20,17.41 16.41,21 12,21Z"/></svg>',
-      priority: 12,
-      group: 'other'
-    },
+    // TEMPORARILY DISABLED - Uncomment to re-enable when pagefind is fixed
+    // security: {
+    //   url: 'https://security.truenas.com/pagefind/',
+    //   name: 'Security Advisories',
+    //   displayName: 'Security Advisories',
+    //   iconSvg: '<svg style="width: 20px; height: 20px; stroke-width: 0.5;" viewBox="0 0 24 24"><path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,21C7.59,21 4,17.41 4,13V6.31L12,3.11L20,6.31V13C20,17.41 16.41,21 12,21Z"/></svg>',
+    //   priority: 12,
+    //   group: 'other'
+    // },
     connect: {
       url: 'https://connect.truenas.com/pagefind/',
       name: 'TrueNAS Connect',
@@ -110,10 +130,10 @@ class MultiSiteSearch {
 
   detectCurrentDocsVersionFromUrl() {
     // Try to detect version from URL. Accepts both decimal (25.04, 25.10)
-    // and integer (26, 27) base version names.
+    // and integer (27, 28) base version names.
     const urlMatch = window.location.pathname.match(/\/(?:docs\/)?(?:scale\/)?(\d+(?:\.\d+)?)/);
     if (urlMatch) {
-      const version = urlMatch[1]; // e.g., "25.04" or "26"
+      const version = urlMatch[1]; // e.g., "25.04" or "27"
       return version;
     }
 
@@ -160,7 +180,7 @@ class MultiSiteSearch {
       const lines = yamlText.split('\n');
 
       // Preferred schema: every lifecycle has a `state:` field. Collect the lifecycle keys
-      // marked `state: "ga"` (e.g., "25.10", "26") and return the highest by version order.
+      // marked `state: "ga"` (e.g., "25.10", "27") and return the highest by version order.
       const gaVersions = [];
       let pendingLifecycle = null;
       for (const line of lines) {
@@ -486,7 +506,7 @@ class MultiSiteSearch {
           .filter(cb => cb.checked)
           .map(cb => cb.dataset.site.replace('docs-', ''))
           .sort((a, b) => {
-            // Sort versions descending (26, 25.10, 25.04, 24.10)
+            // Sort versions descending (28, 27, 25.10, 25.04, 24.10)
             const [aMajor, aMinor] = a.split('.').map(Number);
             const [bMajor, bMinor] = b.split('.').map(Number);
             if (aMajor !== bMajor) return bMajor - aMajor;
@@ -512,6 +532,7 @@ class MultiSiteSearch {
       const docsVersionCheckboxes = document.querySelectorAll('.docs-version-option input[type="checkbox"]:checked');
       const docsSites = Array.from(docsVersionCheckboxes).map(cb => cb.dataset.site);
       this.activeSites.push(...docsSites);
+      this.activeSites.push('docs-hub');
     }
   }
 
@@ -647,7 +668,7 @@ class MultiSiteSearch {
       if (this.activeSites.includes('api')) {
         // Extract versions from docs version dropdown (regardless of main docs toggle state)
         const checkedDocsVersions = Array.from(document.querySelectorAll('.docs-version-option input[type="checkbox"]:checked'))
-          .map(cb => cb.dataset.site.replace('docs-', '')); // ["25.04", "26", etc.]
+          .map(cb => cb.dataset.site.replace('docs-', '')); // ["25.04", "27", etc.]
 
         if (checkedDocsVersions.length > 0) {
 
