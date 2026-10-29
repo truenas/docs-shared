@@ -1,3 +1,7 @@
+{{- /* Search engine hints. The canonical is self-referential and always the HTML page, so a print view canonicalizes to the page itself. Pages are indexable unless a build sets params.docsIndexable = false. */ -}}
+{{ with .OutputFormats.Get "HTML" }}<link rel="canonical" href="{{ .Permalink }}">{{ end }}
+{{ if eq site.Params.docsIndexable false }}<meta name="robots" content="noindex">{{ end }}
+
 <!-- Start cookieyes banner -->
 <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/c005e666a046ac87072fe64f27dbdc4e/script.js"></script>
 <!-- End cookieyes banner -->
