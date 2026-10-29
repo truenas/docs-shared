@@ -415,11 +415,11 @@ class MultiSiteSearch {
     const queryParam = urlParams.get('query');
 
     if (queryParam && queryParam.trim() !== '') {
-      // Check if we're on the /search/ path and redirect to homepage with query
+      // On a search page (/search/ or /docs/search/), hand the query to the landing page under the
+      // same prefix, so a site served below the host root (the hub lives at /docs/) stays inside it.
       const currentPath = window.location.pathname;
-      if (currentPath === '/search/' || currentPath === '/search') {
-        // Redirect to homepage with query parameter preserved
-        window.location.href = `/${window.location.search}`;
+      if (/\/search\/?$/.test(currentPath)) {
+        window.location.href = `${currentPath.replace(/search\/?$/, '')}${window.location.search}`;
         return;
       }
 

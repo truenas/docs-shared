@@ -14,6 +14,8 @@ const fakeBox = (id, isChecked) => ({ id, checked: isChecked, dataset: { site: i
 const ctx = {
   console: { error() {}, log() {}, warn() {} },
   window: {},
+  URLSearchParams,
+  setTimeout: () => 0,
   document: {
     readyState: 'loading',
     addEventListener() {},
@@ -56,4 +58,10 @@ eq(s.activeSites.includes('docs-27'), true, 'selected version is still searched'
 ctx.docsToggle = false;
 s.updateActiveSites();
 eq(s.activeSites.includes('docs-hub'), false, 'hub is not searched when Docs is off');
+// /search/ must hand a ?query= over to the hub landing page under the same prefix (the hub lives at /docs/).
+for (const [pathname, want] of [['/docs/search/', '/docs/?query=abc'], ['/docs/search', '/docs/?query=abc'], ['/search/', '/?query=abc']]) {
+  ctx.window.location = { pathname, search: '?query=abc', href: '' };
+  s.checkUrlQueryParameter();
+  eq(ctx.window.location.href, want, `search redirect from ${pathname}`);
+}
 console.log('ok');
