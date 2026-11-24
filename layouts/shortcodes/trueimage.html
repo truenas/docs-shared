@@ -27,9 +27,9 @@
   {{- end }}
 
 <div style="text-align:center;">
-  <a href="{{ printf "%s" $src | absURL }}" target="_blank"> 
+  <a href="{{ strings.TrimPrefix "/" (printf "%s" $src) | absURL }}" target="_blank"> 
   <figure class="trueimg" id="figure-{{ $figureCounter }}">
-    <img src="{{ printf "%s" $src | absURL }}" title="{{ printf "%s" $alt }}" alt="{{ printf "%s" $alt }}" loading="lazy" decoding="async" style="{{ $style }}">
+    <img src="{{ strings.TrimPrefix "/" (printf "%s" $src) | absURL }}" title="{{ printf "%s" $alt }}" alt="{{ printf "%s" $alt }}" loading="lazy" decoding="async" style="{{ $style }}">
     <figcaption>
       <a href="#figure-{{ $figureCounter }}" style="font-weight:bold;text-align:center;margin-bottom: 1px;">
         Figure {{ $figureCounter }}: {{ $id }}
