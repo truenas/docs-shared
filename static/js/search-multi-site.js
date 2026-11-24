@@ -130,8 +130,9 @@ class MultiSiteSearch {
 
   detectCurrentDocsVersionFromUrl() {
     // Try to detect version from URL. Accepts both decimal (25.04, 25.10)
-    // and integer (27, 28) base version names.
-    const urlMatch = window.location.pathname.match(/\/(?:docs\/)?(?:scale\/)?(\d+(?:\.\d+)?)/);
+    // and integer (27, 28) base version names. The match is anchored so a page name that starts with a number
+    // (/docs/404.html, /docs/hardware/notices/1300wpowersupply/) is not read as a version.
+    const urlMatch = window.location.pathname.match(/^\/(?:docs\/)?(?:scale\/)?(\d+(?:\.\d+)?)(?:\/|$)/);
     if (urlMatch) {
       const version = urlMatch[1]; // e.g., "25.04" or "27"
       return version;

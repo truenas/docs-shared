@@ -64,4 +64,14 @@ for (const [pathname, want] of [['/docs/search/', '/docs/?query=abc'], ['/docs/s
   s.checkUrlQueryParameter();
   eq(ctx.window.location.href, want, `search redirect from ${pathname}`);
 }
+// The version comes from a leading /docs/, /scale/ or bare number segment, never from a page name that starts with digits.
+ctx.document.querySelector = () => null;
+for (const [pathname, want] of [
+  ['/docs/scale/27/apps/', '27'], ['/docs/scale/25.10/', '25.10'], ['/docs/27/shares/', '27'], ['/scale/25.04/x/', '25.04'],
+  ['/docs/404.html', null], ['/docs/404error/', null], ['/docs/hardware/notices/1300wpowersupply/', null],
+  ['/docs/_archive/corereleasenotes/12.0/12.0beta1/', null], ['/docs/nightly/shares/smb/', null], ['/docs/', null],
+]) {
+  ctx.window.location = { pathname, search: '', href: '' };
+  eq(s.detectCurrentDocsVersionFromUrl(), want, `docs version from ${pathname}`);
+}
 console.log('ok');
